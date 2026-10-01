@@ -1,7 +1,7 @@
 # The Pad King app — v1 spec
 
-Date: 2026-10-01
-Status: **Direction locked** (from owner questionnaire). Open items at the bottom block parts of the build, not the start.
+Date: 2026-10-01 (updated same day after the second Q&A round)
+Status: **Direction locked.** First design draft built (landing story + pad maker) for showing Matt. Pad technical accuracy comes later; it's isolated in two files so it can be corrected without touching the design.
 
 ## What it is
 
@@ -14,127 +14,115 @@ Premium, technical, animation-heavy: "Apple product pages on steroids, a touch o
 | Platform | Web app, installable to home screen. No app stores in v1 |
 | Deal | Favour / portfolio piece |
 | Theme | Dark only |
-| Colours | Black + gold, a touch of orange, tiger-stripe background (tonal) |
+| Colours | Black + gold, a touch of orange, tonal tiger-stripe background |
 | Live interactiveness | Simulators + live 3D |
 | Feel | Apple product pages (scroll-driven 3D, product as hero) + Porsche precision |
 | Store | WooCommerce (existing thepadking.com.au) |
-| Custom pad output | Build request sent to Matt to quote/confirm, not straight to cart |
+| Custom pad output | Build request **emailed** to Matt to confirm + quote before payment |
+| Reminders | By **email** (no push in v1) |
+| Machines (selector / simulator) | **DA and Rotary** only, keep it simple |
 | Content edits | Luka handles all changes (no admin panel) |
-| Deadline | None |
+| Hosting | Luka to sort with Matt |
+| Deadline | None — quality over speed |
+| First drafts | Design-focused for showing Matt; backend done properly; pad technicality later |
 
 ## v1 features
 
-### 1. Custom pad maker — Spitfire green pad only (for now)
+### 1. Custom pad maker — Spitfire Green only (for now)
 
-Customer builds a pad; the 3D model morphs live with every choice; finished build is sent to Matt.
+Customer builds a pad; the 3D model morphs live with every choice; the build is emailed to Matt.
 
-| Option | Choices |
-|---|---|
-| Face profile | Raised, Crosscut, Waffle, Flower Power |
-| Edge profile | Rounded, Full Tilt, Trapeze, Cone, Rupes-style |
-| Thickness | 12, 15, 16, 18, 20, 22 mm |
-| Size | 40, 65, 75 mm |
+| Option | Choices | Notes |
+|---|---|---|
+| Size | 40, 65, 75 mm | **Velcro diameter** — the face that sits on the backing plate. Custom-only sizes (stock Spitfire is 3"/5"/6") |
+| Thickness | 12, 15, 16, 18, 20, 22 mm | Total height, velcro to face |
+| Edge | Rounded, Full Tilt, Trapeze, Cone, **Splay** | "Rupes-style" renamed **Splay**: splayed side flaring past the velcro with a bevelled lower lip (Rupes BigFoot description). **Full Tilt shape unknown** — modelled as a deep bevel, provisional |
+| Face | Raised, Crosscut, Waffle, Flower Power | Raised = centre boss. Crosscut = deep square-grid cuts like the Scholl Spider. Waffle = shallow square channels. Flower Power = raised flower-shaped face, **still in testing** (badged "In testing") |
 
-4 × 5 × 6 × 3 = **360 combinations** → the 3D pad is **parametric**, not 360 models:
-- Edge profiles are radial cross-sections → one `LatheGeometry` profile curve per edge type, scaled by size/thickness.
-- Face profiles are surface patterns → displacement/normal maps (crosscut grid, waffle dimples, flower-power petals) or a geometry pass for the raised face.
-- Option changes tween between shapes (no hard swaps).
+All 4 × 5 × 6 × 3 = **360 combinations can be made** (owner-confirmed).
 
-Output: summary card (all options + 3D snapshot) → sent to Matt with customer contact details. Delivery mechanism TBD (email vs WooCommerce order note) — see open items.
+Every option lives in `lib/pad/options.ts`; every shape lives in `lib/pad/geometry.ts`. Real dimensions from Matt = edit numbers there, nothing else.
 
-### 2. 3D catalogue
+### 2. 3D catalogue (phase 2)
 
-Every product rendered as the hero: spin, zoom, exploded/cut-away foam view, full spec sheet, buy link through to WooCommerce. Apple-style scroll sequences on the landing page (pad rotates, explodes into layers, reassembles as you scroll).
+Every product as the hero: spin, zoom, exploded view, full spec sheet, buy link through to WooCommerce. Range per the site: Afterburner (levelling & cutting), Frostbite White (cutting), Lone Star Red, Midas Touch Gold (finishing), Spitfire Green (all rounder).
 
-### 3. Pad ↔ polish compatibility selector
+### 3. Pad ↔ polish compatibility selector (phase 3)
 
-Pick pad (or machine + defect) → recommended compound/polish pairings, speed range, passes. **Every recommendation must come from real data** (Matt's specs/testing) — no invented numbers. Blocked on spec data (see open items).
+DA or Rotary + pad + defect → compound pairings, speed range, passes. **Every recommendation from real data** — blocked on Matt's spec data and compound list.
 
-### 4. Simulator
+### 4. Simulator (phase 3)
 
-Drag machine speed, throw (orbit), and pressure; see the pad's motion live.
-- **Motion path** (rotation + orbit of a DA / forced-rotation machine) is kinematics and can be shown accurately without Pad King data.
-- **Cut / heat readouts** need real test data; until then they're shown as labelled illustrative bands or hidden.
+DA and Rotary only. Motion path (rotation + orbit) shown accurately from kinematics; cut/heat readouts only from real data, otherwise labelled illustrative.
 
-### 5. Reordering
+### 5. Reordering (phase 4)
 
-- **One-tap reorder** — customer signs in with their Pad King store account, sees order history (incl. past custom build requests), taps reorder. Implementation to prove: pre-filled WooCommerce cart via add-to-cart links; fallback is WooCommerce's built-in "Order again" on completed orders.
-- **Smart reminders** — nudge to reorder based on time since purchase × expected pad life (needs Matt's lifespan figure). Web push works on iOS 16.4+ **only when the app is installed to the home screen**; in-app + email as fallback.
+One-tap reorder from WooCommerce order history (fallback: WooCommerce's "Order again"). Smart reminders by **email**, based on time since purchase × pad life (needs Matt's lifespan figure).
 
-## Design system
+## Design system (built)
 
-### Colour tokens (dark only)
+### Colour tokens — `app/globals.css`
 
 | Token | Value | Use |
 |---|---|---|
 | `--pk-bg` | `#08080A` | canvas |
-| `--pk-stripe` | `#121216` | tiger stripes — barely visible at rest |
-| `--pk-surface` | `#111114` | cards/panels |
-| `--pk-surface-2` | `#18181D` | raised surfaces, inputs |
-| `--pk-text` | `#F5F2EA` | primary text (warm white) |
-| `--pk-text-2` | `#A8A49A` | secondary text (~7.6:1 on bg) |
-| `--pk-muted` | `#6B675F` | labels/large text only (~3.6:1 — not for body) |
-| `--pk-gold` | `#C9A55C` | primary accent, CTA fill (dark ink on it, ~8.6:1) |
-| `--pk-gold-hi` | `#F1E3BE` | highlights, sheen core |
-| `--pk-orange` | `#FF7A1A` | the "touch" — sheen leading edge, active state, live indicators. Never an area |
-| `--pk-spitfire` | **TBD (real pad colour)** | reserved exclusively for the product — no UI element uses green |
+| `--pk-stripe` | `#121216` | tiger stripes at rest |
+| `--pk-surface` / `-2` | `#111114` / `#18181D` | panels, inputs |
+| `--pk-text` / `-2` | `#F5F2EA` / `#A8A49A` | primary / secondary text |
+| `--pk-muted` | `#6B675F` | labels/large text only (~3.6:1) |
+| `--pk-gold` / `-hi` / `-deep` | `#C9A55C` / `#F1E3BE` / `#8A6A2C` | accent, CTA fill, metallic type ramp |
+| `--pk-orange` | `#FF7A1A` | the "touch": sheen edge, live dots, errors. Never an area |
+| `--pk-spitfire` | `#6BE846` | sampled from Matt's product photo. **Product only** — no UI uses green |
 
-Rule: gold leads, orange is seasoning, green belongs to the pad. If orange starts appearing as fills, it's overdone.
+### Signature moves
 
-### Signature move — tonal tiger stripes
+- **Tonal tiger stripes** — generated SVG (no asset), black-on-black at rest; a gold → orange light band sweeps beneath them with scroll + slow drift and lights them up; on desktop a torch follows the cursor. Transform-only, static under reduced motion.
+- **One light source** — gold type picks up the same sweep position.
+- **Parametric 3D pad** — every build generated live (no model files); option changes are true per-vertex morphs.
+- **Shader foam** — open-cell micro-normals; Crosscut/Waffle grooves traced per pixel (parallax occlusion) so grid edges stay razor-sharp.
+- **Exploded layers** — velcro / interface / foam separate with numbered markers pinned to each layer.
 
-Black-on-black stripes (`--pk-stripe` on `--pk-bg`) that are nearly invisible until a gold sheen (gold → `--pk-orange` leading edge) sweeps across on scroll / pointer / device tilt and lights them up, then they fade back. One ambient layer, GPU-only (transform/opacity/background-position), off under `prefers-reduced-motion`.
-Device tilt on iOS needs a user tap to grant motion permission → default to scroll/pointer, tilt is opt-in.
+### Type
 
-### Type (proposed — confirm on first mockup)
+Archivo (expanded, 850) display · Inter body · JetBrains Mono data. Self-hosted via Fontsource.
 
-- Display: **Archivo** variable, expanded width, 700–800 — wide automotive caps (the Porsche note).
-- Body/UI: **Inter**.
-- Specs/data readouts: **JetBrains Mono**, tabular figures.
-All Google Fonts, `font-display: swap`.
+### Logo
 
-### Motion rules
+Only a photo of the holographic sticker so far (gold crown on a coloured pad stack, "THE PAD KING / SUPER SERIES FOAMS", 0468 373 625). Header uses a **placeholder wordmark** until Matt supplies the vector logo.
 
-- Scroll-driven 3D on landing/catalogue (GSAP ScrollTrigger + R3F).
-- UI micro-interactions 150–300 ms, spring easing, exits faster than entries.
-- Every animation interruptible, never blocks input, full `prefers-reduced-motion` fallback (static renders).
-- **Performance bar: smooth on a mid-range Android.** Cap device pixel ratio, lazy-load 3D below the fold, static image fallback while the 3D loads or if WebGL is unavailable.
+## Copy sources
 
-## Stack
+All product claims come from thepadking.com.au (via search index; the site itself is blocked from the dev container): Spitfire "corrects, polishes and finishes in one pad", light-to-medium cut, modern clear coats 60–105 µm, 50% greater durability, 120 °C adhesive on Velcro brand loop, interface layers preventing delamination, tested to failure on real cars at the Adelaide R&D facility, designed by Matthew Gibb (30+ years).
 
-- **Next.js** (App Router, TypeScript) + **Tailwind** (tokens above as CSS variables)
-- **React Three Fiber + drei** (3D), **GSAP + ScrollTrigger** (scroll sequences), **Framer Motion** (UI transitions)
-- PWA: manifest + service worker, installable
-- **WooCommerce REST API** called server-side only (API keys never shipped to the browser)
-- Hosting: **not Vercel Hobby** — its terms restrict Hobby to non-commercial use, and a product-selling app is commercial. Options: Vercel Pro (paid) or another host; decide before launch.
+## Stack (built)
 
-Deliberate step up from OMA HQ's no-build static HTML: that setup can't carry parametric 3D + scroll-driven scenes cleanly.
+- Next.js 16 (App Router, TypeScript) · Tailwind 4 · React Three Fiber + drei · GSAP ScrollTrigger
+- `POST /api/build-request` → validates → emails via Resend HTTP API (`RESEND_API_KEY`, `BUILD_REQUEST_TO`, `BUILD_REQUEST_FROM`). Unconfigured → 503 and the UI tells the customer to call — it never fakes a send. Honeypot spam field.
+- WooCommerce REST server-side only (phase 2+)
+- Hosting: not Vercel Hobby (non-commercial only per Vercel's terms) — Luka to agree with Matt
 
 ## Scope guard (favour job)
 
-Favour + no admin panel + no deadline = scope that never closes. To keep Luka's time protected:
-- **v1 = the five features above. Anything else is a v2 conversation with Matt.**
-- Pad maker options, specs, compatibility pairings and reminder intervals live in **one data file** so a change is a two-minute edit, not a code change.
+v1 = the five features above. Anything else is a v2 conversation. Options/specs live in single data files so changes are minutes, not rebuilds.
 
 ## Build order
 
-0. **Look sign-off** — static mockup of landing hero + pad maker screen in the locked colours/stripes/type. Nothing else built until signed off.
-1. Parametric 3D Spitfire pad + pad maker → send to Matt.
-2. 3D catalogue + Apple-style landing scroll (WooCommerce products).
-3. Compatibility selector + simulator (numbers gated on spec data).
-4. Store sign-in, one-tap reorder, smart reminders, push.
+0. ~~Look sign-off~~ → **built as real code**: landing scroll story + pad maker. Awaiting Matt's reaction.
+1. Pad maker → email to Matt — **built** (needs email env vars + Matt's address).
+2. 3D catalogue + WooCommerce products.
+3. Compatibility selector + simulator (DA + Rotary).
+4. Store sign-in, one-tap reorder, email reminders.
 
-## Open items (need from Matt / Luka)
+## Open items
 
 | # | Item | Blocks |
 |---|---|---|
-| 1 | Logo SVG, exact Spitfire green, product photos | Phase 0 polish |
-| 2 | Cross-section drawings or photos of each edge profile (Full Tilt, Trapeze, Cone, Rupes-style, Rounded) + face patterns, with dimensions | Phase 1 accuracy |
-| 3 | Which of the 360 combos are actually buildable (e.g. 22 mm on 40 mm?) | Phase 1 |
-| 4 | Where build requests go (Matt's email? WooCommerce?) | Phase 1 send step |
-| 5 | Pad specs — density, cut level, speed range, lifespan (owner answer: "not sure") | Phase 3 numbers, Phase 4 reminders |
-| 6 | Which compounds/polishes the selector covers (Pad King only, or CarPro/Rupes/Menzerna etc.) | Phase 3 |
-| 7 | WooCommerce REST API keys (read-only) from Matt's WooCommerce admin | Phases 2, 4 |
+| 1 | Vector logo (SVG/AI/PDF) | Header/footer polish |
+| 2 | Full Tilt edge — real shape | Pad accuracy (later) |
+| 3 | Flower Power — final shape once testing is done | Pad accuracy (later) |
+| 4 | Real dimensions for each edge/face profile | Pad accuracy (later) |
+| 5 | Matt's inbox for build requests + a Resend account (or other email provider) | Going live with requests |
+| 6 | Pad specs (density, cut, speed range, lifespan) + compound list | Phase 3, reminders |
+| 7 | WooCommerce REST API keys (read-only) | Phases 2, 4 |
 | 8 | Hosting account + who pays | Launch |
-| 9 | "Rupes-style" is another brand's name — Matt's call whether to use it customer-facing | Copy |
-| 10 | thepadking.com.au is blocked by this dev environment's network policy — allowlist it or supply assets directly | Research |
+| 9 | thepadking.com.au blocked by this dev environment's network policy | Research only |
