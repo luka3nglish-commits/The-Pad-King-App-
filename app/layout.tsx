@@ -3,6 +3,8 @@ import "@fontsource-variable/archivo/wdth.css";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
+import { InstallPrompt } from "@/components/InstallPrompt";
+import { ServiceWorker } from "@/components/ServiceWorker";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TabBar } from "@/components/TabBar";
 import { TigerBackdrop } from "@/components/TigerBackdrop";
@@ -32,6 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main className="relative z-10">{children}</main>
         <TabBar />
+        <InstallPrompt />
+        <ServiceWorker />
       </body>
     </html>
   );

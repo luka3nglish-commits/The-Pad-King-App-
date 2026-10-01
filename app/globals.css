@@ -475,6 +475,11 @@ body {
   animation: pk-card-in 420ms var(--pk-ease-out) both;
 }
 
+/* ---------- install banner ---------- */
+.pk-install {
+  animation: pk-sheet-in 520ms var(--pk-ease-out) both;
+}
+
 /* ---------- request sheet ---------- */
 .pk-sheet[open] {
   animation: pk-sheet-in 420ms var(--pk-ease-out);
