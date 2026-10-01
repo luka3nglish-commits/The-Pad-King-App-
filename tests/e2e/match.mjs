@@ -25,11 +25,18 @@ for (const [name, viewport, dsf] of [["desktop", { width: 1440, height: 900 }, 1
   };
   await goTo();
   await page.screenshot({ path: `${out}/${name}-2-spitfire.png` });
-  for (const [i, pad] of [[3, "Afterburner"], [4, "Midas"]]) {
+  for (const [i, pad] of [[3, "Afterburner"], [4, "Frostbite"], [5, "Midas"]]) {
     await page.locator("label", { hasText: new RegExp(`^${pad}`) }).first().click();
     await page.waitForTimeout(2500);
     await goTo();
     await page.screenshot({ path: `${out}/${name}-${i}-${pad.toLowerCase()}.png` });
+    // the polish tiles themselves
+    await page.evaluate(() => {
+      const ul = document.querySelector("ul.grid");
+      if (ul) scrollTo(0, ul.getBoundingClientRect().top + scrollY - 90);
+    });
+    await page.waitForTimeout(1200);
+    await page.screenshot({ path: `${out}/${name}-${i}b-${pad.toLowerCase()}-polishes.png` });
   }
   await ctx.close();
 }

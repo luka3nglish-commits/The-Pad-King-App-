@@ -50,16 +50,18 @@ Every product as the hero: spin, zoom, exploded view, full spec sheet, buy link 
 
 ### 3. Pad Match — pad → polishes (built)
 
-Owner direction: "you press on a pad and it suggests a few polishes that are good with the pad." Replaces the earlier motion simulator idea.
+Owner direction: "you press on a pad and it suggests a few polishes that are good with the pad", **brands limited to 3D, Sonax, Koch Chemie and P&S** (owner wrote "PNS" — P&S Detail Products: Rehab Correction Crème, Therapy Final Polish), and **images, not just words**.
 
-- All 5 stock pads (custom Spitfire builds use the Spitfire list). Tap a pad → 3D pad recolours/reshapes → its polishes.
-- Each card: brand, product, **stage tag** (Cut / One-step / Finish), **Matt's note** where he gave one (e.g. "Magic combo", "75/25 blend"), **Find a stockist** link.
-- Data (`lib/match.ts`), all from Matt's own published write-ups:
-  - **Spitfire Green** — tested list from his "extend the life of your pads" article: 3D ACA 510 + 520 ("magic combo"), Koch Chemie H9 + F6 (75/25), 3D One, Sonax Perfect Finish, CSI Ceram X, Rupes DA Fine + Uno Pure (80/20), Rupes DA Fine, Koch Chemie M3 (finishing), Oberk Sole.
-  - **Afterburner** — tested list from its product page: Feynlab A50, Sonax Ultimate Cut, Rupes DA Coarse, 3D ACA 510 / 520 / One, Sonax Perfect Finish, Rupes Uno Pure / DA Fine, CSI Ceram XX. Tip: 10 mm sanding interface on a DA.
-  - **Midas Touch Gold, Frostbite White, Lone Star Red** — no pad-specific lists published, so they show **Matt's general one-step guidance** (3D One, CSI Ceram X / XX, CarPro Essence, Labocosmetica Fiero), clearly labelled as general.
-- **Matt to confirm:** every list; stage tags I assigned from each product's role (Oberk Sole left untagged — role unknown); Lone Star Red's description; pad colours other than Spitfire.
-- **Stockist links:** placeholder web search until Matt gives his preferred stockists — or affiliate links, which would earn him money on every referral.
+- All 5 stock pads (custom Spitfire builds use the Spitfire list). Tap a pad → 3D pad recolours/reshapes → its polishes as **product tiles**: bottle art (silhouette per brand, two bottles for combos) on a glow in the pad's colour, brand, product, stage tag, manufacturer spec where published (Sonax Perfect Finish Cut 4 · Gloss 6, Ultimate Cut Cut 6 · Gloss 3), Matt's note, **Matt's pick** badge, Find a stockist.
+- Product art is Pad King-styled illustration, not the brands' packaging. Each polish has an `image` slot: drop in real product photos (from Matt or the brands) and the tile shows the photo instead.
+- **Matt's picks** (badged) come from his published write-ups, filtered to the four brands:
+  - Spitfire Green: 3D ACA 510 + 520 ("magic combo"), Koch Chemie H9 + F6 (75/25), 3D One, Sonax Perfect Finish, Koch Chemie M3 (finishing).
+  - Afterburner: Sonax Ultimate Cut, 3D ACA 510, 3D One, Sonax Perfect Finish, 3D ACA 520. Tip: 10 mm sanding interface on a DA.
+  - Midas / Frostbite / Lone Star: 3D One (from his one-step guide).
+- **Matched to the pad's job (not Matt's — he should confirm):** Afterburner + Koch H9, P&S Rehab; Spitfire + P&S Rehab, P&S Therapy; Frostbite (one-step on harder paints) → P&S Rehab, Sonax Perfect Finish, 3D ACA 510 + 520, Koch H9 + F6; Lone Star (softer paints) → Sonax Perfect Finish, P&S Therapy (P&S rate it for soft, sensitive clears), 3D ACA 520, Koch M3; Midas (finishing) → Sonax Perfect Finish, 3D ACA 520, Koch M3, P&S Therapy.
+- Stage tags from each product's role; P&S Rehab one-step ("corrects and finishes in one step"), Therapy finish.
+- **Frostbite is light blue now** (recent change, owner) — renders `#7CB6DD`, a touch lighter than Afterburner `#5A9FCF`; Afterburner is also a much flatter disc. Name shown as "Frostbite" — confirm whether "White" is still in the product name.
+- **Stockist links:** web search until Matt gives stockists or affiliate links.
 
 ### 4. Simulator
 
@@ -84,7 +86,7 @@ One-tap reorder from WooCommerce order history (fallback: WooCommerce's "Order a
 | `--pk-orange` | `#E2621B` | burnt ember — the "touch": sheen edge, live dots, cut tags, errors. Never an area |
 | `--pk-spitfire` | `#3FA02C` | photo sample was `#6BE846`; deepened per owner. **Product only** — no UI uses green |
 
-**Owner direction (2026-10-01): all colours deep and rich, never fluro.** Pad foams: Spitfire `#3FA02C`, Afterburner `#5A9FCF`, Frostbite `#D9DEE3` (pearl), Lone Star `#B01C26`, Midas `#C78E1F`. 3D foam sheen lifts only 30 % toward white so colours stay saturated.
+**Owner direction (2026-10-01): all colours deep and rich, never fluro.** Pad foams: Spitfire `#3FA02C`, Afterburner `#5A9FCF`, Frostbite `#7CB6DD` (light blue, recently changed), Lone Star `#B01C26`, Midas `#C78E1F`. 3D foam sheen lifts only 30 % toward white so colours stay saturated.
 
 ### Signature moves
 

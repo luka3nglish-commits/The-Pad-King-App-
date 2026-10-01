@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useId, useState } from "react";
 import { PADS, STAGE_LABEL, buyHref, picksFor, type PadEntry, type Stage } from "@/lib/match";
+import { ProductArt } from "./ProductArt";
 import type { PadShape } from "@/lib/pad/geometry";
 
 const MatchScene = dynamic(() => import("./MatchScene"), {
@@ -29,7 +30,7 @@ export function PadMatch() {
   const name = useId();
   const pad = PADS.find((p) => p.id === padId)!;
   const picks = picksFor(pad);
-  const tested = pad.source === "tested";
+  const mattCount = picks.filter((p) => p.matt).length;
 
   return (
     // phones: picker → pad → polishes (tap and see it change). Wider: pad left (sticky), picker + polishes right.
@@ -89,62 +90,76 @@ export function PadMatch() {
       <div className="md:col-start-2 md:row-start-2">
         <div className="flex flex-wrap items-end justify-between gap-3 border-t border-line pt-6">
           <div>
-            <p className="pk-eyebrow">{tested ? "Matt's tested picks" : "General guidance"}</p>
+            <p className="pk-eyebrow">
+              {picks.length} polishes · {mattCount} of Matt&apos;s picks
+            </p>
             <h2 className="mt-2 font-display text-[22px] font-bold uppercase leading-tight tracking-wide [font-stretch:115%] md:text-[26px]">
               Polishes for {pad.name}
             </h2>
           </div>
-          <p className="pk-mono text-[11px] uppercase tracking-[0.16em] text-muted">{picks.length} picks</p>
         </div>
-        {!tested && (
-          <p className="mt-3 rounded-xl border border-line-2 bg-bg/50 p-3 text-[13px] leading-snug text-text-2">
-            Matt hasn&apos;t published pad-specific picks for the {pad.name} yet, so these are from his one-step correction guide.
-          </p>
-        )}
 
-        <ul key={pad.id} className="mt-5 grid gap-3 sm:grid-cols-2">
-          {picks.map(({ polish, note }, i) => (
+        <ul key={pad.id} className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-3">
+          {picks.map(({ polish, note, matt }, i) => (
             <li
               key={polish.id}
-              className="pk-glass pk-card-in flex flex-col gap-3 rounded-[20px] p-4"
+              className="pk-glass pk-card-in group flex flex-col overflow-hidden rounded-[22px]"
               style={{ animationDelay: `${i * 45}ms` }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="pk-mono text-[10px] uppercase tracking-[0.18em] text-text-2">{polish.brand}</p>
-                  <p className="mt-1 font-display text-[19px] font-bold leading-tight [font-stretch:110%]">{polish.name}</p>
-                </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  {polish.stages.length > 0 && (
-                    <span className={`pk-mono rounded-full border px-2 py-0.5 text-[9.5px] uppercase tracking-[0.14em] ${STAGE_STYLE[polish.stages[0]]}`}>
-                      {polish.stages.map((s) => STAGE_LABEL[s]).join(" → ")}
-                    </span>
-                  )}
-                </div>
-              </div>
-              {note && <p className="text-[14px] leading-snug text-gold-hi">&ldquo;{note}&rdquo;</p>}
-              <a
-                href={buyHref(polish)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-auto inline-flex h-10 items-center gap-1.5 self-start rounded-full px-1 text-[13px] font-semibold text-text-2 transition-colors hover:text-gold-hi"
+              {/* product image */}
+              <div
+                className="relative flex h-[188px] items-end justify-center border-b border-line pb-3"
+                style={{
+                  background: `radial-gradient(70% 60% at 50% 62%, ${pad.color}40, transparent 72%), radial-gradient(40% 10% at 50% 92%, rgba(0,0,0,0.75), transparent 80%), #0d0d10`,
+                }}
               >
-                Find a stockist
-                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
-                  <path d="M4 2h6v6M10 2 3 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                </svg>
-                <span className="sr-only">(opens in a new tab)</span>
-              </a>
+                <ProductArt
+                  polish={polish}
+                  className="h-[136px] w-auto drop-shadow-[0_14px_16px_rgba(0,0,0,0.65)] transition-transform duration-300 ease-out group-hover:-translate-y-1.5 group-hover:-rotate-2"
+                />
+                {matt && (
+                  <span className="pk-mono absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-gold px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-[0.12em] text-bg shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                    <svg width="9" height="8" viewBox="0 0 26 22" aria-hidden>
+                      <path d="M3 15 1.5 3.5l6 5L13 1l5.5 7.5 6-5L23 15Z" fill="currentColor" />
+                    </svg>
+                    Matt&apos;s pick
+                  </span>
+                )}
+                <span
+                  className={`pk-mono absolute bottom-2.5 left-2.5 rounded-full border bg-bg/80 px-2 py-0.5 text-[9px] uppercase tracking-[0.14em] backdrop-blur ${STAGE_STYLE[polish.stages[0]]}`}
+                >
+                  {polish.stages.map((st) => STAGE_LABEL[st]).join(" → ")}
+                </span>
+              </div>
+              {/* details */}
+              <div className="flex flex-1 flex-col gap-1.5 p-3.5">
+                <p className="pk-mono text-[10px] uppercase tracking-[0.18em] text-text-2">{polish.brand}</p>
+                <p className="font-display text-[15px] font-bold leading-tight [font-stretch:108%] sm:text-[16px]">{polish.name}</p>
+                {polish.spec && <p className="pk-mono text-[10px] text-muted">{polish.spec}</p>}
+                {note && <p className="text-[13px] leading-snug text-gold-hi">&ldquo;{note}&rdquo;</p>}
+                <a
+                  href={buyHref(polish)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto inline-flex h-9 items-center gap-1.5 self-start pt-1 text-[12.5px] font-semibold text-text-2 transition-colors hover:text-gold-hi"
+                >
+                  Find a stockist
+                  <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden>
+                    <path d="M4 2h6v6M10 2 3 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                  </svg>
+                  <span className="sr-only">(opens in a new tab)</span>
+                </a>
+              </div>
             </li>
           ))}
         </ul>
 
         <p className="mt-5 text-[12px] leading-snug text-muted">
-          {tested ? "From The Pad King's own R&D testing — " : "From Matt's one-step correction guide — "}
+          Matt&apos;s picks come from The Pad King&apos;s own write-ups (
           <a href={pad.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-line-2 underline-offset-2 hover:text-text-2">
-            read it on thepadking.com.au
+            thepadking.com.au
           </a>
-          .
+          ). The rest are matched to what this pad does, from 3D, Sonax, Koch Chemie and P&amp;S.
         </p>
       </div>
     </div>
