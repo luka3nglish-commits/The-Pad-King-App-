@@ -16,7 +16,7 @@ npm run dev          # http://localhost:3000
 ```bash
 npm run typecheck
 npm run lint
-npm test             # geometry (all 360 builds) + build-request validation
+npm test             # geometry (all 360 builds), Motion Lab kinematics, build-request validation
 npm run build
 ```
 
@@ -25,6 +25,7 @@ Visual pass (screenshots of every story beat and maker state, plus a console-err
 ```bash
 npm run build && npx next start -p 3100 &
 node tests/e2e/shots.mjs shots http://localhost:3100
+node tests/e2e/lab.mjs shots-lab http://localhost:3100   # Motion Lab states
 ```
 
 ## Build requests by email
@@ -50,4 +51,6 @@ Without these the endpoint returns 503 and the form tells the customer to call â
 | Colours, type, motion tokens | `app/globals.css` |
 | Scroll story choreography + copy | `components/hero/` |
 | Pad maker UI + request form | `components/maker/` |
-| Coming-soon tabs (Range, Match, Reorder) | `app/range`, `app/match`, `app/orders` |
+| Motion Lab physics (speeds, throws, illustrative DA spin) | `lib/sim.ts` |
+| Motion Lab UI | `components/match/MotionLab.tsx` |
+| Coming-soon tabs (Range, Reorder) | `app/range`, `app/orders` |

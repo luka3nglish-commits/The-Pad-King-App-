@@ -52,9 +52,14 @@ Every product as the hero: spin, zoom, exploded view, full spec sheet, buy link 
 
 DA or Rotary + pad + defect → compound pairings, speed range, passes. **Every recommendation from real data** — blocked on Matt's spec data and compound list.
 
-### 4. Simulator (phase 3)
+### 4. Simulator — Motion Lab (built)
 
-DA and Rotary only. Motion path (rotation + orbit) shown accurately from kinematics; cut/heat readouts only from real data, otherwise labelled illustrative.
+DA and Rotary only, on the Match tab. `lib/sim.ts` (unit-tested) + `components/match/MotionLab.tsx`.
+- Controls: machine, speed (DA 1,500–6,000 OPM; rotary 600–3,000 RPM), throw (8/12/15/21 mm, DA), pad Ø (40–150 mm), pressure (DA).
+- Canvas shows the spindle, the DA's orbit circle and eccentric arm, the spinning pad, and the path one point near the edge traces on the paint — slowed down with the factor shown, orbit:spin ratio preserved.
+- Readouts: centre speed, peak edge speed, pad spin, orbit radius — exact geometry (e.g. rotary 75 mm @ 1,500 RPM edge = 5.9 m/s; DA 15 mm throw @ 4,000 OPM orbit speed = 3.1 m/s).
+- **Illustrative only:** DA pad spin (ratio of orbit rate falling with pressure: light 8 %, medium 4 %, heavy 1.2 %) — badged in the UI. Replace with Matt's measured figures.
+- Cut and heat readouts deliberately absent until there's real test data.
 
 ### 5. Reordering (phase 4)
 
@@ -113,7 +118,7 @@ v1 = the five features above. Anything else is a v2 conversation. Options/specs 
 | Home | `/` | Spitfire Green scroll story |
 | Range | `/range` | Teaser — the five pad names from the site; 3D catalogue is phase 2 |
 | Build | `/build` | Custom pad maker (live) |
-| Match | `/match` | Teaser — DA/Rotary selector + simulator is phase 3 |
+| Match | `/match` | **Motion Lab live** (DA / Rotary simulator); pad + polish recommendations still phase 3 |
 | Reorder | `/orders` | Teaser — one-tap reorder + email reminders is phase 4 |
 
 Tabs are one array in `components/TabBar.tsx`.

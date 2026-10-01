@@ -342,6 +342,57 @@ body {
   }
 }
 
+/* ---------- range slider (Motion Lab) ---------- */
+.pk-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px; /* full touch target; the track is drawn thin */
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.pk-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--pk-gold-deep), var(--pk-gold) var(--p, 50%), rgba(245, 242, 234, 0.12) var(--p, 50%));
+}
+.pk-range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--pk-gold-deep), var(--pk-gold) var(--p, 50%), rgba(245, 242, 234, 0.12) var(--p, 50%));
+}
+.pk-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--pk-gold-hi), var(--pk-gold) 55%, var(--pk-gold-deep));
+  border: 2px solid #0b0b0e;
+  box-shadow: 0 0 0 1px rgba(201, 165, 92, 0.6), 0 4px 14px rgba(0, 0, 0, 0.6);
+  transition: transform var(--pk-dur-1) var(--pk-ease-out);
+}
+.pk-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--pk-gold-hi), var(--pk-gold) 55%, var(--pk-gold-deep));
+  border: 2px solid #0b0b0e;
+  box-shadow: 0 0 0 1px rgba(201, 165, 92, 0.6), 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+.pk-range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.pk-range:focus-visible {
+  outline: none;
+}
+.pk-range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--pk-gold-hi);
+  outline-offset: 3px;
+}
+
 /* ---------- bottom tab bar (OMA HQ pattern) ---------- */
 @media (min-width: 768px) {
   :root {

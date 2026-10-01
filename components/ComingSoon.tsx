@@ -3,11 +3,14 @@ import Link from "next/link";
 /** Shared layout for tabs whose feature is on the roadmap (see the v1 spec build order). */
 export function ComingSoon({
   eyebrow,
+  status = "Coming soon",
   title,
   body,
   children,
 }: {
   eyebrow: string;
+  /** Shown after the eyebrow, e.g. "Coming soon" or "Motion Lab live". */
+  status?: string;
   title: React.ReactNode;
   body: string;
   children?: React.ReactNode;
@@ -15,7 +18,7 @@ export function ComingSoon({
   return (
     <section className="relative z-10 mx-auto max-w-[1280px] px-4 pb-16 pt-[calc(var(--pk-header-h)+48px)] sm:px-8 md:pt-[calc(var(--pk-header-h)+88px)]">
       <p className="pk-eyebrow mb-5 flex items-center gap-2.5">
-        <span className="pk-live" aria-hidden /> {eyebrow} · Coming soon
+        <span className="pk-live" aria-hidden /> {eyebrow} · {status}
       </p>
       <h1 className="pk-display text-[clamp(44px,9vw,120px)]">{title}</h1>
       <p className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-text-2 md:text-lg">{body}</p>
