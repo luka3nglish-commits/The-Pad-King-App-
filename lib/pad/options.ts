@@ -13,8 +13,8 @@ export const FOAM = {
   name: "Spitfire Green",
   line: "All Rounder",
   code: "SPF",
-  /** Sampled from Matt's product photo. */
-  color: "#6BE846",
+  /** Sampled from Matt's photo (#6BE846), then deepened per owner: rich, not fluro. */
+  color: "#3fa02c",
   summary: "Balanced light to medium cut. Corrects, polishes and finishes in one pad.",
 } as const;
 

@@ -56,9 +56,10 @@ export function PadModel({ build, explodeRef, markerEls, explodeScale = 1, color
       color: new THREE.Color(color),
       roughness: 0.86,
       metalness: 0,
-      sheen: 0.8,
-      sheenRoughness: 0.6,
-      sheenColor: new THREE.Color(color).lerp(WHITE, 0.6),
+      sheen: 0.55,
+      sheenRoughness: 0.65,
+      // a gentle lift only: too much white sheen reads as fluro
+      sheenColor: new THREE.Color(color).lerp(WHITE, 0.3),
     };
     const face = createSurfaceMaterial("face", foamParams);
     const foam = createSurfaceMaterial("foam", foamParams);
@@ -92,7 +93,7 @@ export function PadModel({ build, explodeRef, markerEls, explodeScale = 1, color
     for (const m of [materials.face.material, materials.foam.material]) {
       if (!m.color.equals(targetColor)) {
         m.color.lerp(targetColor, 1 - Math.exp(-dt * 7));
-        m.sheenColor.copy(m.color).lerp(WHITE, 0.6);
+        m.sheenColor.copy(m.color).lerp(WHITE, 0.3);
       }
     }
     const u = materials.face.uniforms;

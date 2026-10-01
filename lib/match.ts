@@ -33,7 +33,7 @@ export interface PadEntry {
   short: string;
   role: string;
   blurb: string;
-  /** Foam colour. Spitfire is sampled from Matt's photo; the rest are approximate. */
+  /** Foam colour, deep and rich rather than fluro (owner direction). Approximate except Spitfire. */
   color: string;
   /** Stock shape for the 3D render (mm). */
   shape: { thickness: number };
@@ -83,7 +83,7 @@ export const PADS: PadEntry[] = [
     short: "Afterburner",
     role: "Levelling & cutting",
     blurb: "Super-fast levelling on soft to medium-hard paints and heavy cutting on hard paints, with a better finish than denim or velvet pads.",
-    color: "#8ecdf2",
+    color: "#5a9fcf",
     shape: { thickness: 10 },
     tip: "On a DA, run it on a 10 mm micro-hook sanding interface pad so it contours to the panel.",
     source: "tested",
@@ -107,7 +107,7 @@ export const PADS: PadEntry[] = [
     short: "Frostbite",
     role: "Cutting pad",
     blurb: "Medium to light cut. Best for a one-step on medium-hard and hard paints.",
-    color: "#eef1f4",
+    color: "#d9dee3",
     shape: { thickness: 20 },
     source: "general",
     sourceUrl: SRC_ONE_STEP,
@@ -119,7 +119,7 @@ export const PADS: PadEntry[] = [
     short: "Lone Star",
     role: "Polishing pad",
     blurb: "Built for softer paints.",
-    color: "#d8262f",
+    color: "#b01c26",
     shape: { thickness: 20 },
     source: "general",
     sourceUrl: SRC_ONE_STEP,
@@ -131,7 +131,7 @@ export const PADS: PadEntry[] = [
     short: "Midas",
     role: "Finishing pad",
     blurb: "2.5× the defect removal of a conventional finishing pad, while keeping a high-gloss finish.",
-    color: "#e2b33c",
+    color: "#c78e1f",
     shape: { thickness: 20 },
     source: "general",
     sourceUrl: SRC_ONE_STEP,
@@ -143,7 +143,7 @@ export const PADS: PadEntry[] = [
     short: "Spitfire",
     role: "All rounder",
     blurb: "Balanced light to medium cut. Corrects, polishes and finishes in one pad.",
-    color: "#6be846",
+    color: "#3fa02c",
     shape: { thickness: 20 },
     source: "tested",
     sourceUrl: SRC_SPITFIRE,

@@ -15,11 +15,11 @@
   --pk-text: #f5f2ea;
   --pk-text-2: #a8a49a;
   --pk-muted: #6b675f;
-  --pk-gold: #c9a55c;
-  --pk-gold-hi: #f1e3be;
-  --pk-gold-deep: #8a6a2c;
-  --pk-orange: #ff7a1a;
-  --pk-spitfire: #6be846;
+  --pk-gold: #c99a4a;
+  --pk-gold-hi: #ecd3a0;
+  --pk-gold-deep: #84601f;
+  --pk-orange: #e2621b;
+  --pk-spitfire: #3fa02c;
 
   --pk-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --pk-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -148,7 +148,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(138, 106, 44, 0.55) 22%,
+    rgba(132, 96, 31, 0.55) 22%,
     var(--pk-gold) 46%,
     var(--pk-gold-hi) 54%,
     var(--pk-orange) 68%,
@@ -165,7 +165,7 @@ body {
   height: 520px;
   margin: -260px 0 0 -260px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(241, 227, 190, 0.85) 0%, rgba(201, 165, 92, 0.55) 30%, rgba(255, 122, 26, 0.18) 58%, transparent 72%);
+  background: radial-gradient(circle, rgba(236, 211, 160, 0.85) 0%, rgba(201, 154, 74, 0.55) 30%, rgba(226, 98, 27, 0.18) 58%, transparent 72%);
   transform: translate3d(var(--pk-spot-x, -999px), var(--pk-spot-y, -999px), 0);
   opacity: var(--pk-spot-o, 0);
   transition: opacity 600ms var(--pk-ease-out);
@@ -208,12 +208,12 @@ body {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: linear-gradient(180deg, #d9b871, var(--pk-gold) 55%, #b48f45);
+  background: linear-gradient(180deg, #d6ae62, var(--pk-gold) 55%, #ac8236);
   color: #120e06;
   font-weight: 700;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 10px 30px -10px rgba(201, 165, 92, 0.6);
+    0 10px 30px -10px rgba(201, 154, 74, 0.6);
   transition:
     transform var(--pk-dur-2) var(--pk-ease-out),
     box-shadow var(--pk-dur-2) var(--pk-ease-out);
@@ -223,7 +223,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.55) 48%, rgba(255, 122, 26, 0.35) 56%, transparent 70%);
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.55) 48%, rgba(226, 98, 27, 0.35) 56%, transparent 70%);
   transform: translateX(-120%);
   transition: transform 700ms var(--pk-ease-out);
 }
@@ -234,7 +234,7 @@ body {
 .pk-btn-gold:hover {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 14px 40px -10px rgba(201, 165, 92, 0.75);
+    0 14px 40px -10px rgba(201, 154, 74, 0.75);
 }
 .pk-btn-gold:active {
   transform: scale(0.97);
@@ -256,7 +256,7 @@ body {
   touch-action: manipulation;
 }
 .pk-option:hover {
-  border-color: rgba(201, 165, 92, 0.5);
+  border-color: rgba(201, 154, 74, 0.5);
 }
 .pk-option:active {
   transform: scale(0.97);
@@ -267,8 +267,8 @@ body {
 }
 .pk-option:has(input:checked) {
   border-color: var(--pk-gold);
-  background: linear-gradient(180deg, rgba(201, 165, 92, 0.16), rgba(201, 165, 92, 0.05));
-  box-shadow: inset 0 0 0 1px rgba(201, 165, 92, 0.35);
+  background: linear-gradient(180deg, rgba(201, 154, 74, 0.16), rgba(201, 154, 74, 0.05));
+  box-shadow: inset 0 0 0 1px rgba(201, 154, 74, 0.35);
 }
 .pk-option:has(input:checked) .pk-option__tick {
   opacity: 1;
@@ -288,13 +288,13 @@ body {
   height: 7px;
   border-radius: 50%;
   background: var(--pk-orange);
-  box-shadow: 0 0 0 0 rgba(255, 122, 26, 0.6);
+  box-shadow: 0 0 0 0 rgba(226, 98, 27, 0.6);
   animation: pk-pulse 2.2s var(--pk-ease-out) infinite;
 }
 @keyframes pk-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(255, 122, 26, 0.55); }
-  70% { box-shadow: 0 0 0 9px rgba(255, 122, 26, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 122, 26, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(226, 98, 27, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(226, 98, 27, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(226, 98, 27, 0); }
 }
 
 @keyframes pk-cue {
@@ -416,7 +416,7 @@ body {
   color: var(--pk-gold-hi);
 }
 .pk-tab[data-active] svg {
-  filter: drop-shadow(0 0 8px rgba(201, 165, 92, 0.55));
+  filter: drop-shadow(0 0 8px rgba(201, 154, 74, 0.55));
 }
 
 /* the active pill slides between tabs */
@@ -428,7 +428,7 @@ body {
   height: 3px;
   border-radius: 999px;
   background: var(--pk-gold);
-  box-shadow: 0 0 10px rgba(201, 165, 92, 0.75);
+  box-shadow: 0 0 10px rgba(201, 154, 74, 0.75);
   transition: left 420ms var(--pk-ease-out);
 }
 
@@ -439,7 +439,7 @@ body {
   z-index: 70;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(100deg, transparent 30%, rgba(201, 165, 92, 0.35) 46%, rgba(255, 122, 26, 0.22) 54%, transparent 68%);
+  background: linear-gradient(100deg, transparent 30%, rgba(201, 154, 74, 0.35) 46%, rgba(226, 98, 27, 0.22) 54%, transparent 68%);
 }
 .pk-sweep.is-on {
   animation: pk-sweep 460ms cubic-bezier(0.3, 0.7, 0.2, 1);

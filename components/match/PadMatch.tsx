@@ -9,7 +9,7 @@ const MatchScene = dynamic(() => import("./MatchScene"), {
   ssr: false,
   loading: () => (
     <div className="absolute inset-0 grid place-items-center" aria-hidden>
-      <div className="size-[45%] rounded-full bg-[radial-gradient(circle,rgba(201,165,92,0.18),transparent_65%)] blur-2xl" />
+      <div className="size-[45%] rounded-full bg-[radial-gradient(circle,rgba(201, 154, 74,0.18),transparent_65%)] blur-2xl" />
     </div>
   ),
 });

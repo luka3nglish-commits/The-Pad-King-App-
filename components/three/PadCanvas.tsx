@@ -41,8 +41,8 @@ export function PadCanvas({ children, className, camera, label, overlay }: PadCa
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, camera?.z ?? 4.2], fov: camera?.fov ?? 30, near: 0.1, far: 50 }}
         onCreated={({ gl }) => {
-          gl.toneMapping = THREE.NeutralToneMapping; // keeps the Spitfire green true to the product
-          gl.toneMappingExposure = 1.05;
+          gl.toneMapping = THREE.NeutralToneMapping; // neutral keeps pad colours rich instead of washing them out
+          gl.toneMappingExposure = 0.98;
           gl.setClearColor(0x000000, 0);
         }}
         style={{ touchAction: "pan-y" }}
@@ -54,13 +54,13 @@ export function PadCanvas({ children, className, camera, label, overlay }: PadCa
         {/* soft front fill from the camera so faces turned to the viewer never go muddy */}
         <directionalLight position={[-0.5, -0.6, 6]} intensity={1.1} color="#fffaf0" />
         {/* gold rim from behind-left */}
-        <directionalLight position={[-4, 2.5, -3]} intensity={2.7} color="#c9a55c" />
+        <directionalLight position={[-4, 2.5, -3]} intensity={2.7} color="#c99a4a" />
         {/* orange kicker, low right — the "touch of orange" */}
-        <pointLight position={[3.4, -1.8, 0.6]} intensity={3.2} distance={8} decay={1.8} color="#ff7a1a" />
+        <pointLight position={[3.4, -1.8, 0.6]} intensity={3.2} distance={8} decay={1.8} color="#e2621b" />
         <Environment resolution={128} frames={1}>
           <Lightformer form="rect" intensity={1.6} color="#fff1d6" position={[0, 4, 3]} scale={[8, 3, 1]} />
-          <Lightformer form="rect" intensity={2.4} color="#c9a55c" position={[-5, 1, -2]} rotation-y={Math.PI / 2.5} scale={[4, 6, 1]} />
-          <Lightformer form="ring" intensity={0.8} color="#ff7a1a" position={[4, -2, 2]} scale={2} />
+          <Lightformer form="rect" intensity={2.4} color="#c99a4a" position={[-5, 1, -2]} rotation-y={Math.PI / 2.5} scale={[4, 6, 1]} />
+          <Lightformer form="ring" intensity={0.8} color="#e2621b" position={[4, -2, 2]} scale={2} />
         </Environment>
         {children}
       </Canvas>

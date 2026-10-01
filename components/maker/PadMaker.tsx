@@ -22,7 +22,7 @@ const MakerScene = dynamic(() => import("./MakerScene"), {
   ssr: false,
   loading: () => (
     <div className="absolute inset-0 grid place-items-center" aria-hidden>
-      <div className="size-[40%] rounded-full bg-[radial-gradient(circle,rgba(107,232,70,0.25),transparent_65%)] blur-2xl" />
+      <div className="size-[40%] rounded-full bg-[radial-gradient(circle,rgba(63,160,44,0.25),transparent_65%)] blur-2xl" />
     </div>
   ),
 });
@@ -89,7 +89,7 @@ export function PadMaker() {
         {/* Viewer — sticky so every change is visible while you scroll the options */}
         <div className="sticky top-[calc(var(--pk-header-h)+8px)] z-20 h-[40svh] md:top-[calc(var(--pk-header-h)+24px)] md:h-[calc(100svh-var(--pk-header-h)-var(--pk-tab-h)-40px)]">
           <div className="pk-glass pk-solid relative h-full overflow-hidden rounded-[28px]">
-            <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_60%,rgba(201,165,92,0.10),transparent_70%)]" aria-hidden />
+            <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_60%,rgba(201, 154, 74,0.10),transparent_70%)]" aria-hidden />
             <MakerScene build={build} explodeRef={explodeRef} />
 
             <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4 md:p-6">

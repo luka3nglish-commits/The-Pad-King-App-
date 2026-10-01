@@ -68,7 +68,7 @@ export function renderBuildEmail({ build, contact }: BuildRequest) {
   const text = rows.map(([k, v]) => `${k}: ${v}`).join("\n");
   const html = `<!doctype html><html><body style="margin:0;background:#08080a;font-family:Arial,sans-serif;color:#f5f2ea">
 <div style="max-width:560px;margin:0 auto;padding:28px">
-<p style="font-family:monospace;font-size:11px;letter-spacing:.2em;color:#c9a55c;margin:0 0 8px">THE PAD KING · CUSTOM BUILD REQUEST</p>
+<p style="font-family:monospace;font-size:11px;letter-spacing:.2em;color:#c99a4a;margin:0 0 8px">THE PAD KING · CUSTOM BUILD REQUEST</p>
 <h1 style="font-size:26px;margin:0 0 20px;color:#f5f2ea">${esc(code)}</h1>
 <table style="width:100%;border-collapse:collapse">${rows
     .map(

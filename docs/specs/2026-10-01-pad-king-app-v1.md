@@ -80,9 +80,11 @@ One-tap reorder from WooCommerce order history (fallback: WooCommerce's "Order a
 | `--pk-surface` / `-2` | `#111114` / `#18181D` | panels, inputs |
 | `--pk-text` / `-2` | `#F5F2EA` / `#A8A49A` | primary / secondary text |
 | `--pk-muted` | `#6B675F` | labels/large text only (~3.6:1) |
-| `--pk-gold` / `-hi` / `-deep` | `#C9A55C` / `#F1E3BE` / `#8A6A2C` | accent, CTA fill, metallic type ramp |
-| `--pk-orange` | `#FF7A1A` | the "touch": sheen edge, live dots, errors. Never an area |
-| `--pk-spitfire` | `#6BE846` | sampled from Matt's product photo. **Product only** — no UI uses green |
+| `--pk-gold` / `-hi` / `-deep` | `#C99A4A` / `#ECD3A0` / `#84601F` | accent, CTA fill, metallic type ramp |
+| `--pk-orange` | `#E2621B` | burnt ember — the "touch": sheen edge, live dots, cut tags, errors. Never an area |
+| `--pk-spitfire` | `#3FA02C` | photo sample was `#6BE846`; deepened per owner. **Product only** — no UI uses green |
+
+**Owner direction (2026-10-02): all colours deep and rich, never fluro.** Pad foams: Spitfire `#3FA02C`, Afterburner `#5A9FCF`, Frostbite `#D9DEE3` (pearl), Lone Star `#B01C26`, Midas `#C78E1F`. 3D foam sheen lifts only 30 % toward white so colours stay saturated.
 
 ### Signature moves
 

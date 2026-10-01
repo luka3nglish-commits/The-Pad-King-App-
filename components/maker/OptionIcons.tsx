@@ -42,7 +42,7 @@ export function FaceIcon({ face }: { face: FaceId }) {
     return lines;
   };
   let detail: React.ReactNode = null;
-  if (face === "raised") detail = <circle cx={c} cy={c} r={R * 0.6} fill="#9cf57f" />;
+  if (face === "raised") detail = <circle cx={c} cy={c} r={R * 0.6} fill="#66c04e" />;
   if (face === "crosscut") detail = <g fill="rgba(8,8,10,0.75)">{grid(4.6, 0.9)}</g>;
   if (face === "waffle") detail = <g fill="rgba(8,8,10,0.55)">{grid(6.4, 2)}</g>;
   if (face === "flower") {
@@ -52,7 +52,7 @@ export function FaceIcon({ face }: { face: FaceId }) {
       const rb = R * 0.68 * (0.72 + 0.28 * Math.pow(Math.abs(Math.cos(3 * th)), 0.7));
       pts.push(`${(c + rb * Math.cos(th)).toFixed(2)} ${(c + rb * Math.sin(th)).toFixed(2)}`);
     }
-    detail = <path d={`M${pts.join("L")}Z`} fill="#9cf57f" />;
+    detail = <path d={`M${pts.join("L")}Z`} fill="#66c04e" />;
   }
   return (
     <svg viewBox={`0 0 ${S} ${S}`} className="size-11" aria-hidden>
