@@ -1,0 +1,500 @@
+@import "tailwindcss";
+
+/* ============================================================
+   THE PAD KING — design tokens (spec: docs/specs/2026-10-01-pad-king-app-v1.md)
+   Dark only. Gold leads, orange is seasoning, green belongs to the pad.
+   ============================================================ */
+
+:root {
+  --pk-bg: #08080a;
+  --pk-stripe: #121216;
+  --pk-surface: #111114;
+  --pk-surface-2: #18181d;
+  --pk-line: rgba(245, 242, 234, 0.08);
+  --pk-line-2: rgba(245, 242, 234, 0.16);
+  --pk-text: #f5f2ea;
+  --pk-text-2: #a8a49a;
+  --pk-muted: #6b675f;
+  --pk-gold: #c99a4a;
+  --pk-gold-hi: #ecd3a0;
+  --pk-gold-deep: #84601f;
+  --pk-orange: #e2621b;
+  --pk-spitfire: #3fa02c;
+
+  --pk-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --pk-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --pk-dur-1: 160ms;
+  --pk-dur-2: 260ms;
+  --pk-dur-3: 420ms;
+
+  --pk-header-h: 64px;
+  /* space the bottom tab bar takes (full-width bar on phones, floating dock above) */
+  --pk-tab-h: calc(66px + env(safe-area-inset-bottom));
+  color-scheme: dark;
+}
+
+@theme {
+  --color-bg: var(--pk-bg);
+  --color-surface: var(--pk-surface);
+  --color-surface-2: var(--pk-surface-2);
+  --color-line: var(--pk-line);
+  --color-line-2: var(--pk-line-2);
+  --color-text: var(--pk-text);
+  --color-text-2: var(--pk-text-2);
+  --color-muted: var(--pk-muted);
+  --color-gold: var(--pk-gold);
+  --color-gold-hi: var(--pk-gold-hi);
+  --color-gold-deep: var(--pk-gold-deep);
+  --color-orange: var(--pk-orange);
+  --color-spitfire: var(--pk-spitfire);
+
+  --font-display: "Archivo Variable", "Inter Variable", system-ui, sans-serif;
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html {
+  background: var(--pk-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--pk-bg);
+  color: var(--pk-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--pk-gold);
+  color: var(--pk-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--pk-gold-hi);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- type ---------- */
+
+.pk-display {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.pk-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pk-gold);
+}
+
+.pk-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Brushed-gold text: a static metallic ramp; the sheen layer animates on top. */
+.pk-gold-text {
+  background: linear-gradient(
+    100deg,
+    var(--pk-gold-deep) 0%,
+    var(--pk-gold) 22%,
+    var(--pk-gold-hi) 46%,
+    var(--pk-gold) 62%,
+    var(--pk-gold-deep) 100%
+  );
+  background-size: 220% 100%;
+  background-position: var(--pk-sheen-pos, 30%) 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- tiger backdrop ---------- */
+
+.pk-tiger {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--pk-bg);
+}
+
+.pk-tiger__light {
+  position: absolute;
+  inset: 0;
+}
+
+.pk-tiger__band {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  height: 140%;
+  width: 46vmax;
+  transform: translate3d(var(--pk-band-x, -60vmax), 0, 0) skewX(-18deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(132, 96, 31, 0.55) 22%,
+    var(--pk-gold) 46%,
+    var(--pk-gold-hi) 54%,
+    var(--pk-orange) 68%,
+    transparent 100%
+  );
+  will-change: transform;
+}
+
+.pk-tiger__spot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  margin: -260px 0 0 -260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(236, 211, 160, 0.85) 0%, rgba(201, 154, 74, 0.55) 30%, rgba(226, 98, 27, 0.18) 58%, transparent 72%);
+  transform: translate3d(var(--pk-spot-x, -999px), var(--pk-spot-y, -999px), 0);
+  opacity: var(--pk-spot-o, 0);
+  transition: opacity 600ms var(--pk-ease-out);
+  will-change: transform;
+}
+
+.pk-tiger__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pk-tiger__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 50% 0%, transparent 40%, rgba(8, 8, 10, 0.75) 100%),
+    linear-gradient(180deg, rgba(8, 8, 10, 0) 70%, rgba(8, 8, 10, 0.9) 100%);
+}
+
+/* ---------- surfaces ---------- */
+
+.pk-glass {
+  background: linear-gradient(180deg, rgba(24, 24, 29, 0.78), rgba(17, 17, 20, 0.72));
+  border: 1px solid var(--pk-line);
+  box-shadow:
+    inset 0 1px 0 rgba(245, 242, 234, 0.06),
+    0 24px 60px -24px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+}
+
+/* opaque variant for surfaces that content scrolls underneath */
+.pk-solid {
+  background: linear-gradient(180deg, #19191e, #0f0f12);
+}
+
+.pk-btn-gold {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #d6ae62, var(--pk-gold) 55%, #ac8236);
+  color: #120e06;
+  font-weight: 700;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 10px 30px -10px rgba(201, 154, 74, 0.6);
+  transition:
+    transform var(--pk-dur-2) var(--pk-ease-out),
+    box-shadow var(--pk-dur-2) var(--pk-ease-out);
+}
+.pk-btn-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.55) 48%, rgba(226, 98, 27, 0.35) 56%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 700ms var(--pk-ease-out);
+}
+.pk-btn-gold:hover::after,
+.pk-btn-gold:focus-visible::after {
+  transform: translateX(120%);
+}
+.pk-btn-gold:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 14px 40px -10px rgba(201, 154, 74, 0.75);
+}
+.pk-btn-gold:active {
+  transform: scale(0.97);
+}
+.pk-btn-gold:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Option chips / cards */
+.pk-option {
+  position: relative;
+  border: 1px solid var(--pk-line-2);
+  background: rgba(17, 17, 20, 0.7);
+  transition:
+    border-color var(--pk-dur-2) var(--pk-ease-out),
+    background-color var(--pk-dur-2) var(--pk-ease-out),
+    transform var(--pk-dur-1) var(--pk-ease-out);
+  touch-action: manipulation;
+}
+.pk-option:hover {
+  border-color: rgba(201, 154, 74, 0.5);
+}
+.pk-option:active {
+  transform: scale(0.97);
+}
+.pk-option:has(input:focus-visible) {
+  outline: 2px solid var(--pk-gold-hi);
+  outline-offset: 2px;
+}
+.pk-option:has(input:checked) {
+  border-color: var(--pk-gold);
+  background: linear-gradient(180deg, rgba(201, 154, 74, 0.16), rgba(201, 154, 74, 0.05));
+  box-shadow: inset 0 0 0 1px rgba(201, 154, 74, 0.35);
+}
+.pk-option:has(input:checked) .pk-option__tick {
+  opacity: 1;
+  transform: scale(1);
+}
+.pk-option__tick {
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--pk-dur-2) var(--pk-ease-out),
+    transform var(--pk-dur-2) var(--pk-ease-out);
+}
+
+/* Live dot (orange = live/active — never an area) */
+.pk-live {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pk-orange);
+  box-shadow: 0 0 0 0 rgba(226, 98, 27, 0.6);
+  animation: pk-pulse 2.2s var(--pk-ease-out) infinite;
+}
+@keyframes pk-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(226, 98, 27, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(226, 98, 27, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(226, 98, 27, 0); }
+}
+
+@keyframes pk-cue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+/* Hero beats start hidden; GSAP drives them. Without JS/motion they show. */
+.pk-beat {
+  will-change: opacity, transform;
+}
+
+/* ---------- reduced motion: everything static, everything readable ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .pk-tiger__band {
+    transform: translate3d(30vw, 0, 0) skewX(-18deg);
+    opacity: 0.55;
+  }
+  .pk-tiger__spot,
+  .pk-sweep {
+    display: none;
+  }
+  .pk-page {
+    animation: none;
+  }
+}
+
+/* In the maker, anything scrolled to (focus, programmatic) lands clear of the
+   sticky 3D viewer above and the tab bar below. */
+#build :is(label, button, input, a, textarea) {
+  scroll-margin-top: calc(var(--pk-header-h) + 40svh + 24px);
+  scroll-margin-bottom: calc(var(--pk-tab-h) + 16px);
+}
+@media (min-width: 768px) {
+  #build :is(label, button, input, a, textarea) {
+    scroll-margin-top: calc(var(--pk-header-h) + 24px);
+  }
+}
+
+/* ---------- bottom tab bar (OMA HQ pattern) ---------- */
+@media (min-width: 768px) {
+  :root {
+    --pk-tab-h: 104px;
+  }
+}
+
+.pk-tabbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 60;
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  background: rgba(8, 8, 10, 0.97);
+  border-top: 1px solid var(--pk-line);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+}
+@media (min-width: 768px) {
+  .pk-tabbar {
+    left: 50%;
+    right: auto;
+    bottom: 20px;
+    width: min(560px, calc(100% - 32px));
+    transform: translateX(-50%);
+    padding: 6px;
+    border: 1px solid var(--pk-line-2);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #1a1a1f, #0c0c0f);
+    box-shadow:
+      inset 0 1px 0 rgba(245, 242, 234, 0.07),
+      0 24px 60px -18px rgba(0, 0, 0, 0.9);
+  }
+}
+
+.pk-tabbar__grid {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+.pk-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 6px 0 10px;
+  color: #827d73;
+  border-radius: 16px;
+  transition:
+    color var(--pk-dur-1) ease,
+    transform var(--pk-dur-1) var(--pk-ease-out);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.pk-tab span {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.pk-tab:hover {
+  color: var(--pk-text-2);
+}
+.pk-tab:active {
+  transform: scale(0.94);
+}
+.pk-tab[data-active] {
+  color: var(--pk-gold-hi);
+}
+.pk-tab[data-active] svg {
+  filter: drop-shadow(0 0 8px rgba(201, 154, 74, 0.55));
+}
+
+/* the active pill slides between tabs */
+.pk-tabbar__pill {
+  position: absolute;
+  bottom: 3px;
+  left: calc((var(--i) + 0.5) * (100% / var(--n)) - 11px);
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--pk-gold);
+  box-shadow: 0 0 10px rgba(201, 154, 74, 0.75);
+  transition: left 420ms var(--pk-ease-out);
+}
+
+/* tab-switch light sweep */
+.pk-sweep {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(201, 154, 74, 0.35) 46%, rgba(226, 98, 27, 0.22) 54%, transparent 68%);
+}
+.pk-sweep.is-on {
+  animation: pk-sweep 460ms cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+@keyframes pk-sweep {
+  0% { opacity: 0; transform: translateX(-35%); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(35%); }
+}
+
+/* page entrance (app/template.tsx re-mounts on every tab) */
+.pk-page {
+  animation: pk-page-in 460ms var(--pk-ease-out) both;
+}
+@keyframes pk-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ---------- pad match ---------- */
+.pk-card-in {
+  animation: pk-card-in 460ms var(--pk-ease-out) both;
+}
+@keyframes pk-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+.pk-fade-up {
+  animation: pk-card-in 420ms var(--pk-ease-out) both;
+}
+
+/* ---------- install banner ---------- */
+.pk-install {
+  animation: pk-sheet-in 520ms var(--pk-ease-out) both;
+}
+
+/* ---------- request sheet ---------- */
+.pk-sheet[open] {
+  animation: pk-sheet-in 420ms var(--pk-ease-out);
+}
+.pk-sheet[open]::backdrop {
+  animation: pk-fade-in 300ms var(--pk-ease-out);
+}
+@keyframes pk-sheet-in {
+  from {
+    transform: translateY(48px);
+    opacity: 0;
+  }
+}
+@keyframes pk-fade-in {
+  from {
+    opacity: 0;
+  }
+}
