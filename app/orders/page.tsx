@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ComingSoon, Steps } from "@/components/ComingSoon";
+import { Steps, TabPage } from "@/components/TabPage";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = { title: "Reorder" };
@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Reorder" };
 export default function OrdersPage() {
   return (
     <>
-      <ComingSoon
+      <TabPage
         eyebrow="Reorder"
         title={
           <>
@@ -23,7 +23,7 @@ export default function OrdersPage() {
             { title: "Tap to reorder", body: "Plus an email reminder before your pads wear out." },
           ]}
         />
-      </ComingSoon>
+      </TabPage>
       <SiteFooter />
     </>
   );

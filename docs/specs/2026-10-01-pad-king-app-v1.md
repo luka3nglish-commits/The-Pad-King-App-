@@ -48,18 +48,22 @@ Every option lives in `lib/pad/options.ts`; every shape lives in `lib/pad/geomet
 
 Every product as the hero: spin, zoom, exploded view, full spec sheet, buy link through to WooCommerce. Range per the site: Afterburner (levelling & cutting), Frostbite White (cutting), Lone Star Red, Midas Touch Gold (finishing), Spitfire Green (all rounder).
 
-### 3. Pad ↔ polish compatibility selector (phase 3)
+### 3. Pad Match — pad → polishes (built)
 
-DA or Rotary + pad + defect → compound pairings, speed range, passes. **Every recommendation from real data** — blocked on Matt's spec data and compound list.
+Owner direction: "you press on a pad and it suggests a few polishes that are good with the pad." Replaces the earlier motion simulator idea.
 
-### 4. Simulator — Motion Lab (built)
+- All 5 stock pads (custom Spitfire builds use the Spitfire list). Tap a pad → 3D pad recolours/reshapes → its polishes.
+- Each card: brand, product, **stage tag** (Cut / One-step / Finish), **Matt's note** where he gave one (e.g. "Magic combo", "75/25 blend"), **Find a stockist** link.
+- Data (`lib/match.ts`), all from Matt's own published write-ups:
+  - **Spitfire Green** — tested list from his "extend the life of your pads" article: 3D ACA 510 + 520 ("magic combo"), Koch Chemie H9 + F6 (75/25), 3D One, Sonax Perfect Finish, CSI Ceram X, Rupes DA Fine + Uno Pure (80/20), Rupes DA Fine, Koch Chemie M3 (finishing), Oberk Sole.
+  - **Afterburner** — tested list from its product page: Feynlab A50, Sonax Ultimate Cut, Rupes DA Coarse, 3D ACA 510 / 520 / One, Sonax Perfect Finish, Rupes Uno Pure / DA Fine, CSI Ceram XX. Tip: 10 mm sanding interface on a DA.
+  - **Midas Touch Gold, Frostbite White, Lone Star Red** — no pad-specific lists published, so they show **Matt's general one-step guidance** (3D One, CSI Ceram X / XX, CarPro Essence, Labocosmetica Fiero), clearly labelled as general.
+- **Matt to confirm:** every list; stage tags I assigned from each product's role (Oberk Sole left untagged — role unknown); Lone Star Red's description; pad colours other than Spitfire.
+- **Stockist links:** placeholder web search until Matt gives his preferred stockists — or affiliate links, which would earn him money on every referral.
 
-DA and Rotary only, on the Match tab. `lib/sim.ts` (unit-tested) + `components/match/MotionLab.tsx`.
-- Controls: machine, speed (DA 1,500–6,000 OPM; rotary 600–3,000 RPM), throw (8/12/15/21 mm, DA), pad Ø (40–150 mm), pressure (DA).
-- Canvas shows the spindle, the DA's orbit circle and eccentric arm, the spinning pad, and the path one point near the edge traces on the paint — slowed down with the factor shown, orbit:spin ratio preserved.
-- Readouts: centre speed, peak edge speed, pad spin, orbit radius — exact geometry (e.g. rotary 75 mm @ 1,500 RPM edge = 5.9 m/s; DA 15 mm throw @ 4,000 OPM orbit speed = 3.1 m/s).
-- **Illustrative only:** DA pad spin (ratio of orbit rate falling with pressure: light 8 %, medium 4 %, heavy 1.2 %) — badged in the UI. Replace with Matt's measured figures.
-- Cut and heat readouts deliberately absent until there's real test data.
+### 4. Simulator
+
+Dropped by owner in favour of Pad Match (a motion simulator was built and removed — in git history if ever wanted).
 
 ### 5. Reordering (phase 4)
 
@@ -118,7 +122,7 @@ v1 = the five features above. Anything else is a v2 conversation. Options/specs 
 | Home | `/` | Spitfire Green scroll story |
 | Range | `/range` | Teaser — the five pad names from the site; 3D catalogue is phase 2 |
 | Build | `/build` | Custom pad maker (live) |
-| Match | `/match` | **Motion Lab live** (DA / Rotary simulator); pad + polish recommendations still phase 3 |
+| Match | `/match` | **Pad Match live** — tap a pad, get the polishes Matt pairs with it |
 | Reorder | `/orders` | Teaser — one-tap reorder + email reminders is phase 4 |
 
 Tabs are one array in `components/TabBar.tsx`.

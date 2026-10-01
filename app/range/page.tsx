@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ComingSoon } from "@/components/ComingSoon";
+import { TabPage } from "@/components/TabPage";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = { title: "The range" };
@@ -11,7 +11,7 @@ const RANGE = ["Afterburner", "Frostbite White", "Lone Star Red", "Midas Touch G
 export default function RangePage() {
   return (
     <>
-      <ComingSoon
+      <TabPage
         eyebrow="3D catalogue"
         title={
           <>
@@ -40,7 +40,7 @@ export default function RangePage() {
             );
           })}
         </ol>
-      </ComingSoon>
+      </TabPage>
       <SiteFooter />
     </>
   );

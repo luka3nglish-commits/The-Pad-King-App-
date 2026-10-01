@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-/** Shared layout for tabs whose feature is on the roadmap (see the v1 spec build order). */
-export function ComingSoon({
+/** Shared layout for the secondary tabs: intro, content, CTAs. `status` marks live vs coming soon. */
+export function TabPage({
   eyebrow,
   status = "Coming soon",
   title,

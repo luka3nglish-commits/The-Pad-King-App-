@@ -22,13 +22,18 @@ export interface PadModelProps {
   markerEls?: MutableRefObject<(HTMLElement | null)[]>;
   /** Multiplier on how far the layers separate. */
   explodeScale?: number;
+  /** Foam colour; changes blend smoothly. Defaults to Spitfire Green. */
+  color?: string;
 }
 
 const _v = new THREE.Vector3();
 const _s = new THREE.Vector3();
 const _right = new THREE.Vector3();
 
-export function PadModel({ build, explodeRef, markerEls, explodeScale = 1 }: PadModelProps) {
+const WHITE = new THREE.Color("#ffffff");
+
+export function PadModel({ build, explodeRef, markerEls, explodeScale = 1, color = FOAM.color }: PadModelProps) {
+  const targetColor = useMemo(() => new THREE.Color(color), [color]);
   const anchors = useRef<(THREE.Object3D | null)[]>([]);
   const set = useMemo(() => new PadGeometrySet(padState(build)), []); // eslint-disable-line react-hooks/exhaustive-deps
   const morph = useRef({ start: 0, active: false });
@@ -48,12 +53,12 @@ export function PadModel({ build, explodeRef, markerEls, explodeScale = 1 }: Pad
 
   const materials = useMemo(() => {
     const foamParams = {
-      color: new THREE.Color(FOAM.color),
+      color: new THREE.Color(color),
       roughness: 0.86,
       metalness: 0,
       sheen: 0.8,
       sheenRoughness: 0.6,
-      sheenColor: new THREE.Color("#d9ffc4"),
+      sheenColor: new THREE.Color(color).lerp(WHITE, 0.6),
     };
     const face = createSurfaceMaterial("face", foamParams);
     const foam = createSurfaceMaterial("foam", foamParams);
@@ -67,7 +72,7 @@ export function PadModel({ build, explodeRef, markerEls, explodeScale = 1 }: Pad
       sheenColor: new THREE.Color("#8a8a98"),
     });
     return { face, foam, iface, velcro };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- colour changes are blended in useFrame
 
   useEffect(
     () => () => {
@@ -82,6 +87,13 @@ export function PadModel({ build, explodeRef, markerEls, explodeScale = 1 }: Pad
       const t = Math.min(1, (performance.now() - m.start) / MORPH_MS);
       set.apply(easeInOutCubic(t));
       if (t >= 1) m.active = false;
+    }
+    // blend towards the requested foam colour (sheen follows, lifted towards white)
+    for (const m of [materials.face.material, materials.foam.material]) {
+      if (!m.color.equals(targetColor)) {
+        m.color.lerp(targetColor, 1 - Math.exp(-dt * 7));
+        m.sheenColor.copy(m.color).lerp(WHITE, 0.6);
+      }
     }
     const u = materials.face.uniforms;
     u.uPat.value.set(set.pat[0], set.pat[1], set.pat[2], set.pat[3]);
