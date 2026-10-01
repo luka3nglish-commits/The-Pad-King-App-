@@ -46,7 +46,7 @@ Every option lives in `lib/pad/options.ts`; every shape lives in `lib/pad/geomet
 
 ### 2. 3D catalogue (phase 2)
 
-Every product as the hero: spin, zoom, exploded view, full spec sheet, buy link through to WooCommerce. Range per the site: Afterburner (levelling & cutting), Frostbite White (cutting), Lone Star Red, Midas Touch Gold (finishing), Spitfire Green (all rounder).
+Every product as the hero: spin, zoom, exploded view, full spec sheet, buy link through to WooCommerce. Range per the site: Afterburner (levelling & cutting), Frostbite Cutting Pad (cutting, now light blue), Lone Star Red, Midas Touch Gold (finishing), Spitfire Green (all rounder).
 
 ### 3. Pad Match — pad → polishes (built)
 
@@ -60,7 +60,7 @@ Owner direction: "you press on a pad and it suggests a few polishes that are goo
   - Midas / Frostbite / Lone Star: 3D One (from his one-step guide).
 - **Matched to the pad's job (not Matt's — he should confirm):** Afterburner + Koch H9, P&S Rehab; Spitfire + P&S Rehab, P&S Therapy; Frostbite (one-step on harder paints) → P&S Rehab, Sonax Perfect Finish, 3D ACA 510 + 520, Koch H9 + F6; Lone Star (softer paints) → Sonax Perfect Finish, P&S Therapy (P&S rate it for soft, sensitive clears), 3D ACA 520, Koch M3; Midas (finishing) → Sonax Perfect Finish, 3D ACA 520, Koch M3, P&S Therapy.
 - Stage tags from each product's role; P&S Rehab one-step ("corrects and finishes in one step"), Therapy finish.
-- **Frostbite is light blue now** (recent change, owner) — renders `#7CB6DD`, a touch lighter than Afterburner `#5A9FCF`; Afterburner is also a much flatter disc. Name shown as "Frostbite" — confirm whether "White" is still in the product name.
+- **Frostbite is light blue now** (recent change, owner) — renders `#7CB6DD`, a touch lighter than Afterburner `#5A9FCF`; Afterburner is also a much flatter disc. Product name is **Frostbite Cutting Pad** (owner; "White" dropped with the colour change).
 - **Stockist links:** web search until Matt gives stockists or affiliate links.
 
 ### 4. Simulator

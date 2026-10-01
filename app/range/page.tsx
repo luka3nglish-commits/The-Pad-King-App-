@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const metadata: Metadata = { title: "The range" };
 
 // Names as listed on thepadking.com.au. Roles/specs land with the 3D catalogue.
-const RANGE = ["Afterburner", "Frostbite White", "Lone Star Red", "Midas Touch Gold", "Spitfire Green"];
+const RANGE = ["Afterburner", "Frostbite Cutting Pad", "Lone Star Red", "Midas Touch Gold", "Spitfire Green"];
 
 export default function RangePage() {
   return (

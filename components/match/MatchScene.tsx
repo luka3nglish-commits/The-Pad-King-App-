@@ -18,8 +18,8 @@ function Rig({ shape, color }: { shape: PadShape; color: string }) {
     if (centre.current) centre.current.position.y = THREE.MathUtils.damp(centre.current.position.y, -shape.thickness * 0.01, 6, dt);
     // sit the pad below the name overlay, with breathing room on every side
     const wide = state.size.width / state.size.height > 1;
-    state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, wide ? 5.2 : 5.8, 4, dt);
-    if (lift.current) lift.current.position.y = THREE.MathUtils.damp(lift.current.position.y, wide ? -0.32 : -0.28, 4, dt);
+    state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, wide ? 5.5 : 5.8, 4, dt);
+    if (lift.current) lift.current.position.y = THREE.MathUtils.damp(lift.current.position.y, wide ? -0.44 : -0.28, 4, dt);
   });
 
   return (

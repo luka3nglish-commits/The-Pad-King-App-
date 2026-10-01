@@ -46,7 +46,7 @@ export function PadMatch() {
           <MatchScene shape={shapeOf(pad)} color={pad.color} label={`${pad.name} pad in 3D. Drag to rotate.`} />
           <div className="pointer-events-none absolute inset-x-0 top-0 p-5 md:p-6">
             <p className="pk-mono text-[10px] uppercase tracking-[0.2em] text-muted">Selected pad</p>
-            <p key={pad.id} className="pk-display pk-fade-up mt-2 text-[clamp(22px,5.8vw,40px)] md:text-[clamp(26px,3vw,40px)]">
+            <p key={pad.id} className="pk-display pk-fade-up mt-2 text-[clamp(20px,5.3vw,40px)] md:text-[clamp(26px,3vw,40px)]">
               {pad.name}
             </p>
             <p className="pk-mono mt-2 text-[11px] uppercase tracking-[0.18em] text-gold-hi">{pad.role}</p>

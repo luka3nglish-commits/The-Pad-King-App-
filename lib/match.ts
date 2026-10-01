@@ -95,9 +95,9 @@ export const PADS: PadEntry[] = [
   },
   {
     id: "frostbite",
-    name: "Frostbite",
+    name: "Frostbite Cutting Pad",
     short: "Frostbite",
-    role: "Cutting pad",
+    role: "Medium to light cut",
     blurb: "Medium to light cut. Best for a one-step on medium-hard and hard paints.",
     color: "#7cb6dd",
     shape: { thickness: 20 },
