@@ -1,5 +1,6 @@
 /**
  * Pad Match data — which polishes go with which Pad King pad.
+ * The pads themselves live in lib/pads.ts (shared with the Range tab).
  *
  * Brands: 3D, Sonax, Koch Chemie and P&S only (owner direction).
  *
@@ -38,18 +39,8 @@ export interface Pick {
   matt?: boolean;
 }
 
-export interface PadEntry {
-  id: string;
-  name: string;
-  short: string;
-  role: string;
-  blurb: string;
-  /** Foam colour, deep and rich rather than fluro (owner direction). */
-  color: string;
-  /** Stock shape for the 3D render (mm). */
-  shape: { thickness: number };
-  tip?: string;
-  /** Where Matt's picks for this pad come from. */
+/** Polishes for one pad, and where Matt's picks for it come from. */
+export interface PadPicks {
   sourceUrl: string;
   picks: Pick[];
 }
@@ -72,16 +63,8 @@ export const POLISHES: Polish[] = [
   { id: "ps-therapy", brand: "P&S", name: "Therapy Final Polish", art: [["THERAPY"]], stages: ["finish"] },
 ];
 
-export const PADS: PadEntry[] = [
-  {
-    id: "afterburner",
-    name: "Afterburner",
-    short: "Afterburner",
-    role: "Levelling & cutting",
-    blurb: "Super-fast levelling on soft to medium-hard paints and heavy cutting on hard paints, with a better finish than denim or velvet pads.",
-    color: "#5a9fcf",
-    shape: { thickness: 10 },
-    tip: "On a DA, run it on a 10 mm micro-hook sanding interface pad so it contours to the panel.",
+export const PICKS: Record<string, PadPicks> = {
+  afterburner: {
     sourceUrl: SRC_AFTERBURNER,
     picks: [
       { polish: "sonax-ultimate-cut", matt: true },
@@ -93,14 +76,7 @@ export const PADS: PadEntry[] = [
       { polish: "3d-aca-520", matt: true },
     ],
   },
-  {
-    id: "frostbite",
-    name: "Frostbite Cutting Pad",
-    short: "Frostbite",
-    role: "Medium to light cut",
-    blurb: "Medium to light cut. Best for a one-step on medium-hard and hard paints.",
-    color: "#7cb6dd",
-    shape: { thickness: 20 },
+  frostbite: {
     sourceUrl: SRC_ONE_STEP,
     picks: [
       { polish: "3d-one", matt: true, note: "One-product correction cream" },
@@ -110,14 +86,7 @@ export const PADS: PadEntry[] = [
       { polish: "koch-h9-f6" },
     ],
   },
-  {
-    id: "lone-star",
-    name: "Lone Star Red",
-    short: "Lone Star",
-    role: "Polishing pad",
-    blurb: "Built for softer paints.",
-    color: "#b01c26",
-    shape: { thickness: 20 },
+  "lone-star": {
     sourceUrl: SRC_ONE_STEP,
     picks: [
       { polish: "3d-one", matt: true, note: "One-product correction cream" },
@@ -127,14 +96,7 @@ export const PADS: PadEntry[] = [
       { polish: "koch-m3" },
     ],
   },
-  {
-    id: "midas",
-    name: "Midas Touch Gold",
-    short: "Midas",
-    role: "Finishing pad",
-    blurb: "2.5× the defect removal of a conventional finishing pad, while keeping a high-gloss finish.",
-    color: "#c78e1f",
-    shape: { thickness: 20 },
+  midas: {
     sourceUrl: SRC_ONE_STEP,
     picks: [
       { polish: "3d-one", matt: true, note: "One-product correction cream" },
@@ -144,14 +106,7 @@ export const PADS: PadEntry[] = [
       { polish: "ps-therapy" },
     ],
   },
-  {
-    id: "spitfire",
-    name: "Spitfire Green",
-    short: "Spitfire",
-    role: "All rounder",
-    blurb: "Balanced light to medium cut. Corrects, polishes and finishes in one pad.",
-    color: "#3fa02c",
-    shape: { thickness: 20 },
+  spitfire: {
     sourceUrl: SRC_SPITFIRE,
     picks: [
       { polish: "3d-aca-510-520", matt: true, note: "Magic combo" },
@@ -163,7 +118,7 @@ export const PADS: PadEntry[] = [
       { polish: "ps-therapy" },
     ],
   },
-];
+};
 
 const STAGE_ORDER: Record<Stage, number> = { cut: 0, "one-step": 1, finish: 2 };
 export const STAGE_LABEL: Record<Stage, string> = { cut: "Cut", "one-step": "One-step", finish: "Finish" };
@@ -175,8 +130,8 @@ export function polishOf(id: string): Polish {
 }
 
 /** A pad's picks resolved and ordered cut → one-step → finish; Matt's picks first within a stage. */
-export function picksFor(pad: PadEntry) {
-  return pad.picks
+export function picksFor(padId: string) {
+  return (PICKS[padId]?.picks ?? [])
     .map((p) => ({ ...p, polish: polishOf(p.polish) }))
     .sort((a, b) => rank(a.polish) - rank(b.polish) || Number(!!b.matt) - Number(!!a.matt));
 }

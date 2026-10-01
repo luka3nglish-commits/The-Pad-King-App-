@@ -1,16 +1,18 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useId, useState } from "react";
-import { PADS, STAGE_LABEL, buyHref, picksFor, type PadEntry, type Stage } from "@/lib/match";
+import { useEffect, useId, useState } from "react";
+import { stockShape } from "@/components/three/PadStage";
+import { track } from "@/lib/analytics";
+import { PICKS, STAGE_LABEL, buyHref, picksFor, type Stage } from "@/lib/match";
+import { PADS, padById } from "@/lib/pads";
 import { ProductArt } from "./ProductArt";
-import type { PadShape } from "@/lib/pad/geometry";
 
-const MatchScene = dynamic(() => import("./MatchScene"), {
+const PadStage = dynamic(() => import("@/components/three/PadStage"), {
   ssr: false,
   loading: () => (
     <div className="absolute inset-0 grid place-items-center" aria-hidden>
-      <div className="size-[45%] rounded-full bg-[radial-gradient(circle,rgba(201, 154, 74,0.18),transparent_65%)] blur-2xl" />
+      <div className="size-[45%] rounded-full bg-[radial-gradient(circle,rgba(201,154,74,0.18),transparent_65%)] blur-2xl" />
     </div>
   ),
 });
@@ -21,16 +23,28 @@ const STAGE_STYLE: Record<Stage, string> = {
   finish: "border-line-2 text-text",
 };
 
-function shapeOf(pad: PadEntry): PadShape {
-  return { size: 75, thickness: pad.shape.thickness, edge: "rounded", face: "flat" };
-}
-
 export function PadMatch() {
   const [padId, setPadId] = useState("spitfire");
   const name = useId();
-  const pad = PADS.find((p) => p.id === padId)!;
-  const picks = picksFor(pad);
+  const pad = padById(padId)!;
+  const picks = picksFor(pad.id);
   const mattCount = picks.filter((p) => p.matt).length;
+
+  // deep links: /match?pad=midas (from the Range tab, or a shared link)
+  useEffect(() => {
+    const fromUrl = padById(new URLSearchParams(window.location.search).get("pad"));
+    // read after hydration on purpose: the page is prerendered, so the URL isn't known on the server
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (fromUrl) setPadId(fromUrl.id);
+  }, []);
+
+  const choose = (id: string) => {
+    setPadId(id);
+    track("match_select", { pad: id });
+    const url = new URL(window.location.href);
+    url.searchParams.set("pad", id);
+    window.history.replaceState(null, "", url);
+  };
 
   return (
     // phones: picker → pad → polishes (tap and see it change). Wider: pad left (sticky), picker + polishes right.
@@ -43,7 +57,7 @@ export function PadMatch() {
             style={{ background: `radial-gradient(70% 55% at 50% 55%, ${pad.color}22, transparent 70%)` }}
             aria-hidden
           />
-          <MatchScene shape={shapeOf(pad)} color={pad.color} label={`${pad.name} pad in 3D. Drag to rotate.`} />
+          <PadStage shape={stockShape(pad.shape.thickness)} color={pad.color} label={`${pad.name} pad in 3D. Drag to rotate.`} />
           <div className="pointer-events-none absolute inset-x-0 top-0 p-5 md:p-6">
             <p className="pk-mono text-[10px] uppercase tracking-[0.2em] text-muted">Selected pad</p>
             <p key={pad.id} className="pk-display pk-fade-up mt-2 text-[clamp(20px,5.3vw,40px)] md:text-[clamp(26px,3vw,40px)]">
@@ -70,7 +84,7 @@ export function PadMatch() {
           <div className="grid grid-cols-5 gap-2">
             {PADS.map((p) => (
               <label key={p.id} className="pk-option flex cursor-pointer flex-col items-center gap-2 rounded-2xl px-1 pb-2.5 pt-3">
-                <input type="radio" name={name} className="sr-only" checked={p.id === padId} onChange={() => setPadId(p.id)} />
+                <input type="radio" name={name} className="sr-only" checked={p.id === padId} onChange={() => choose(p.id)} />
                 <span
                   className="size-9 rounded-full shadow-[inset_0_-4px_8px_rgba(0,0,0,0.25),0_0_0_1px_rgba(245,242,234,0.12)]"
                   style={{ background: `radial-gradient(circle at 35% 30%, ${p.color}, ${p.color}cc 60%, ${p.color}88)` }}
@@ -141,6 +155,7 @@ export function PadMatch() {
                   href={buyHref(polish)}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => track("stockist_click", { pad: pad.id, polish: polish.id })}
                   className="mt-auto inline-flex h-9 items-center gap-1.5 self-start pt-1 text-[12.5px] font-semibold text-text-2 transition-colors hover:text-gold-hi"
                 >
                   Find a stockist
@@ -156,7 +171,7 @@ export function PadMatch() {
 
         <p className="mt-5 text-[12px] leading-snug text-muted">
           Matt&apos;s picks come from The Pad King&apos;s own write-ups (
-          <a href={pad.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-line-2 underline-offset-2 hover:text-text-2">
+          <a href={PICKS[pad.id].sourceUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-line-2 underline-offset-2 hover:text-text-2">
             thepadking.com.au
           </a>
           ). The rest are matched to what this pad does, from 3D, Sonax, Koch Chemie and P&amp;S.

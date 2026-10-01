@@ -98,7 +98,7 @@ export function HeroStory() {
     <section ref={sectionRef} id="story" className="relative" style={{ height: "520svh" }} aria-label="Spitfire Green story">
       <div className="sticky top-0 h-[calc(100svh-var(--pk-tab-h))] overflow-hidden">
         <div
-          className="pointer-events-none absolute right-[-6vw] top-1/2 hidden size-[62vmin] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(201, 154, 74,0.16),rgba(226, 98, 27,0.05)_45%,transparent_70%)] md:block lg:right-[4vw]"
+          className="pointer-events-none absolute right-[-6vw] top-1/2 hidden size-[62vmin] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(201,154,74,0.16),rgba(226,98,27,0.05)_45%,transparent_70%)] md:block lg:right-[4vw]"
           aria-hidden
         />
         <HeroScene progressRef={progressRef} />
