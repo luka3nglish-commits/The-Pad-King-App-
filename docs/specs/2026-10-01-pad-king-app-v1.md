@@ -25,6 +25,7 @@ Premium, technical, animation-heavy: "Apple product pages on steroids, a touch o
 | Hosting | Luka to sort with Matt |
 | Deadline | None — quality over speed |
 | First drafts | Design-focused for showing Matt; backend done properly; pad technicality later |
+| Navigation | **Bottom tabs like OMA HQ**: Home · Range · Build · Match · Reorder. Full-width bar on phones, floating dock on wider screens; gold active pill slides between tabs; light sweep on switch |
 
 ## v1 features
 
@@ -104,6 +105,18 @@ All product claims come from thepadking.com.au (via search index; the site itsel
 ## Scope guard (favour job)
 
 v1 = the five features above. Anything else is a v2 conversation. Options/specs live in single data files so changes are minutes, not rebuilds.
+
+## App structure (built)
+
+| Tab | Route | State |
+|---|---|---|
+| Home | `/` | Spitfire Green scroll story |
+| Range | `/range` | Teaser — the five pad names from the site; 3D catalogue is phase 2 |
+| Build | `/build` | Custom pad maker (live) |
+| Match | `/match` | Teaser — DA/Rotary selector + simulator is phase 3 |
+| Reorder | `/orders` | Teaser — one-tap reorder + email reminders is phase 4 |
+
+Tabs are one array in `components/TabBar.tsx`.
 
 ## Build order
 

@@ -73,7 +73,7 @@ export function PadMaker() {
   const face = faceOf(build.face);
 
   return (
-    <section id="build" className="relative z-10 scroll-mt-[var(--pk-header-h)] pb-24" aria-labelledby="build-title">
+    <section id="build" className="relative z-10 pb-16" aria-labelledby="build-title">
       <div className="mx-auto max-w-[1280px] px-4 pt-20 sm:px-8 md:pt-28">
         <p className="pk-eyebrow mb-4">Pad Maker · {FOAM.name}</p>
         <h2 id="build-title" className="pk-display text-[clamp(44px,9vw,120px)]">
@@ -87,8 +87,8 @@ export function PadMaker() {
 
       <div className="mx-auto mt-10 grid max-w-[1280px] gap-6 px-4 sm:px-8 md:mt-14 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:gap-10">
         {/* Viewer — sticky so every change is visible while you scroll the options */}
-        <div className="sticky top-[calc(var(--pk-header-h)+8px)] z-20 h-[44svh] md:top-[calc(var(--pk-header-h)+24px)] md:h-[calc(100svh-var(--pk-header-h)-48px)]">
-          <div className="pk-glass relative h-full overflow-hidden rounded-[28px]">
+        <div className="sticky top-[calc(var(--pk-header-h)+8px)] z-20 h-[40svh] md:top-[calc(var(--pk-header-h)+24px)] md:h-[calc(100svh-var(--pk-header-h)-var(--pk-tab-h)-40px)]">
+          <div className="pk-glass pk-solid relative h-full overflow-hidden rounded-[28px]">
             <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_60%,rgba(201,165,92,0.10),transparent_70%)]" aria-hidden />
             <MakerScene build={build} explodeRef={explodeRef} />
 

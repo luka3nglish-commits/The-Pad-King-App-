@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -95,7 +96,7 @@ export function HeroStory() {
 
   return (
     <section ref={sectionRef} id="story" className="relative" style={{ height: "520svh" }} aria-label="Spitfire Green story">
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+      <div className="sticky top-0 h-[calc(100svh-var(--pk-tab-h))] overflow-hidden">
         <div
           className="pointer-events-none absolute right-[-6vw] top-1/2 hidden size-[62vmin] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(201,165,92,0.16),rgba(255,122,26,0.05)_45%,transparent_70%)] md:block lg:right-[4vw]"
           aria-hidden
@@ -170,20 +171,20 @@ export function HeroStory() {
               Every design is tested to failure on real cars and real paint systems at the Adelaide R&amp;D facility.
               Designed by master detailer Matthew Gibb.
             </p>
-            <a
-              href="#build"
+            <Link
+              href="/build"
               className="pk-btn-gold pointer-events-auto mt-8 inline-flex h-12 items-center gap-2 rounded-full px-6 text-[15px]"
             >
               Build your own pad
               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
                 <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
 
         {/* scroll cue */}
-        <div className="pointer-events-none absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex" aria-hidden>
+        <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex" aria-hidden>
           <span className="pk-mono text-[10px] uppercase tracking-[0.3em] text-muted">Scroll</span>
           <span className="h-10 w-px overflow-hidden bg-line-2">
             <span className="block h-1/2 w-px animate-[pk-cue_1.8s_ease-in-out_infinite] bg-gold" />

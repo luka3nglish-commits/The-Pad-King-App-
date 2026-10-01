@@ -46,6 +46,8 @@ Without these the endpoint returns 503 and the form tells the customer to call â
 | Pad maker options (sizes, heights, edges, faces, copy) | `lib/pad/options.ts` |
 | Pad shapes (edge profiles, face bosses, groove patterns) | `lib/pad/geometry.ts` |
 | Foam look (cells, grooves shader) | `lib/pad/foamMaterial.ts` |
+| Bottom tabs (order, names, icons) | `components/TabBar.tsx` |
 | Colours, type, motion tokens | `app/globals.css` |
 | Scroll story choreography + copy | `components/hero/` |
 | Pad maker UI + request form | `components/maker/` |
+| Coming-soon tabs (Range, Match, Reorder) | `app/range`, `app/match`, `app/orders` |

@@ -33,17 +33,21 @@ async function run(name, viewport, dsf) {
     await page.screenshot({ path: `${out}/${name}-0${i}-story-${p}.png` });
   }
 
-  await page.evaluate(() => document.getElementById("build").scrollIntoView());
-  await page.waitForTimeout(2500);
+  // navigate with the bottom tab bar, like a user would
+  await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Build" }).click();
+  await page.waitForURL("**/build");
+  await page.waitForTimeout(3500);
   await page.screenshot({ path: `${out}/${name}-05-maker.png` });
-  if (viewport.width >= 800) await page.screenshot({ path: `${out}/${name}-05b-maker-full.png`, fullPage: false });
+  await page.evaluate(() => window.scrollTo(0, 420));
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: `${out}/${name}-05b-maker-viewer.png` });
 
   // change options
   await page.getByText("Cone", { exact: true }).click();
   await page.getByText("Waffle", { exact: true }).click();
   await page.locator("label", { hasText: /^40/ }).first().click();
   await page.waitForTimeout(1800);
-  await page.evaluate(() => document.getElementById("build").scrollIntoView());
+  await page.evaluate(() => window.scrollTo(0, 420));
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${out}/${name}-06-maker-changed.png` });
 
@@ -61,6 +65,13 @@ async function run(name, viewport, dsf) {
   await page.getByRole("button", { name: "Send build request" }).click();
   await page.waitForTimeout(1200);
   await page.screenshot({ path: `${out}/${name}-09-sheet-result.png` });
+  await page.keyboard.press("Escape");
+
+  for (const [i, tab] of [[10, "Range"], [11, "Match"], [12, "Reorder"], [13, "Home"]]) {
+    await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: tab }).click();
+    await page.waitForTimeout(2200);
+    await page.screenshot({ path: `${out}/${name}-${i}-tab-${tab.toLowerCase()}.png` });
+  }
   await ctx.close();
 }
 
