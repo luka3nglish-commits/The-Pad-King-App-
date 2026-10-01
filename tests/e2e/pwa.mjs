@@ -32,7 +32,7 @@ const ok = (cond, msg) => (cond ? console.log("✓", msg) : (fail.push(msg), con
     og: document.querySelector('meta[property="og:image"]')?.getAttribute("content") ?? null,
   }));
   ok(links.manifest && links.apple, "head links manifest + apple-touch-icon");
-  console.log("  og:image =", links.og);
+  ok(!!links.og && new URL(links.og).pathname === "/opengraph-image.jpg", "share image linked (og:image)");
   await ctx.close();
 }
 

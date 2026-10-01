@@ -1,8 +1,10 @@
 /**
  * Analytics, provider-agnostic. Nothing is sent unless a provider is configured
  * (see components/Analytics.tsx and .env.example):
- *   NEXT_PUBLIC_PLAUSIBLE_DOMAIN → Plausible (cookieless, recommended)
- *   NEXT_PUBLIC_GA_ID            → Google Analytics 4
+ *   NEXT_PUBLIC_PLAUSIBLE_SRC → Plausible (cookieless, recommended)
+ *   NEXT_PUBLIC_GA_ID         → Google Analytics 4
+ *
+ * Never put customer details (name, email, phone) in event props.
  *
  * Page views are tracked by the provider scripts; call track() for the moments
  * Matt cares about (pads looked at, build requests, buy clicks, installs).

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Steps, TabPage } from "@/components/TabPage";
 import { SiteFooter } from "@/components/SiteFooter";
 
-export const metadata: Metadata = { title: "Reorder" };
+export const metadata: Metadata = {
+  title: "Reorder",
+  description: "Reorder your Pad King pads in one tap, with an email reminder before they wear out. Coming soon.",
+};
 
 export default function OrdersPage() {
   return (

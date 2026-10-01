@@ -3,7 +3,10 @@ import { PadMatch } from "@/components/match/PadMatch";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TabPage } from "@/components/TabPage";
 
-export const metadata: Metadata = { title: "Pad Match" };
+export const metadata: Metadata = {
+  title: "Pad Match",
+  description: "Tap a Pad King pad and see the 3D, Sonax, Koch Chemie and P&S polishes that suit it.",
+};
 
 export default function MatchPage() {
   return (

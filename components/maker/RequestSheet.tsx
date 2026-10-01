@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import { validateContact, type Contact, type FieldErrors } from "@/lib/buildRequest";
 import { FOAM, buildCode, edgeOf, faceOf, type PadBuild } from "@/lib/pad/options";
 
@@ -26,9 +27,12 @@ export function RequestSheet({ open, onClose, build }: Props) {
     if (!d) return;
     if (open && !d.open) {
       d.showModal();
+      track("build_request_open", { build: buildCode(build) });
       setStatus((s) => (s.kind === "sent" ? { kind: "idle" } : s));
     }
     if (!open && d.open) d.close();
+    // only the open/close transition matters; the build is read at that moment
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const update = <K extends keyof Contact>(k: K, v: Contact[K]) => {
@@ -55,9 +59,12 @@ export function RequestSheet({ open, onClose, build }: Props) {
       });
       if (res.ok) {
         setStatus({ kind: "sent", code: buildCode(build) });
+        // build spec only, never the customer's details
+        track("build_request_sent", { build: buildCode(build), quantity: contact.quantity });
         return;
       }
       const data = (await res.json().catch(() => ({}))) as { error?: string };
+      track("build_request_failed", { reason: data.error ?? `http_${res.status}` });
       setStatus({
         kind: "error",
         message:
@@ -66,6 +73,7 @@ export function RequestSheet({ open, onClose, build }: Props) {
             : `That didn't send. Try again, or call ${PHONE} with your build code.`,
       });
     } catch {
+      track("build_request_failed", { reason: "offline" });
       setStatus({ kind: "error", message: `You look to be offline. Try again, or call ${PHONE} with your build code.` });
     }
   };
@@ -204,7 +212,10 @@ export function RequestSheet({ open, onClose, build }: Props) {
                 "Send build request"
               )}
             </button>
-            <p className="text-center text-[13px] text-muted">No payment now. Matt confirms the build and quotes it first.</p>
+            <p className="text-center text-[13px] text-muted">
+              No payment now. Matt confirms the build and quotes it first.
+              <span className="mt-1 block text-[12px]">Your details are only used to reply about this build.</span>
+            </p>
           </form>
         )}
       </div>

@@ -44,9 +44,13 @@ All 4 × 5 × 6 × 3 = **360 combinations can be made** (owner-confirmed).
 
 Every option lives in `lib/pad/options.ts`; every shape lives in `lib/pad/geometry.ts`. Real dimensions from Matt = edit numbers there, nothing else.
 
-### 2. 3D catalogue (phase 2)
+### 2. 3D catalogue — Range tab (built)
 
-Every product as the hero: spin, zoom, exploded view, full spec sheet, buy link through to WooCommerce. Range per the site: Afterburner (levelling & cutting), Frostbite Cutting Pad (cutting, now light blue), Lone Star Red, Midas Touch Gold (finishing), Spitfire Green (all rounder).
+Apple-style showroom: one big 3D stage (drag to spin), a five-pad lineup to switch, the published spec sheet and sizes, and **Buy the …** straight to that pad's product page on thepadking.com.au (links confirmed by owner). Also links to the pad's polishes in Pad Match and, for Spitfire, the pad maker. Deep links: `/range?pad=midas`.
+
+Range per the site: Afterburner (levelling & cutting), Frostbite Cutting Pad (cutting, now light blue), Lone Star Red, Midas Touch Gold (finishing), Spitfire Green (all rounder). One catalogue (`lib/pads.ts`) feeds Range and Match; specs only where Matt's site publishes a figure.
+
+Later: live prices/stock from WooCommerce (needs read-only keys).
 
 ### 3. Pad Match — pad → polishes (built)
 
@@ -62,6 +66,14 @@ Owner direction: "you press on a pad and it suggests a few polishes that are goo
 - Stage tags from each product's role; P&S Rehab one-step ("corrects and finishes in one step"), Therapy finish.
 - **Frostbite is light blue now** (recent change, owner) — renders `#7CB6DD`, a touch lighter than Afterburner `#5A9FCF`; Afterburner is also a much flatter disc. Product name is **Frostbite Cutting Pad** (owner; "White" dropped with the colour change).
 - **Stockist links:** web search until Matt gives stockists or affiliate links.
+
+### Phone install, share preview, analytics (built)
+
+- **Install:** manifest + PNG icons (normal and maskable) + Apple touch icon, all rendered from one SVG. Phones get a banner after 20 s: one-tap Install on Android, Share → Add to Home Screen steps on iPhone Safari; dismissed = quiet for two weeks. Shortcuts to Build, Match, Range from the home-screen icon.
+- **Offline:** service worker caches assets and visited pages; anything else shows an offline screen with the phone number.
+- **Share preview:** 1200×630 (rendered at 2×) card with the whole range in real 3D and "Build your own pad." Per-page titles and descriptions. Needs `NEXT_PUBLIC_SITE_URL` once the domain is known (automatic on Vercel).
+- **Analytics:** off until Plausible (recommended, cookieless) or GA4 is set by env. Events: pad picks, buy clicks, stockist clicks, build requests opened/sent/failed, installs. Customer details never go into events.
+- **Privacy line** on the build request form: "Your details are only used to reply about this build." Matt to OK the wording.
 
 ### 4. Simulator
 
@@ -124,7 +136,7 @@ v1 = the five features above. Anything else is a v2 conversation. Options/specs 
 | Tab | Route | State |
 |---|---|---|
 | Home | `/` | Spitfire Green scroll story |
-| Range | `/range` | Teaser — the five pad names from the site; 3D catalogue is phase 2 |
+| Range | `/range` | **Showroom live** — all five pads in 3D, specs, sizes, buy links |
 | Build | `/build` | Custom pad maker (live) |
 | Match | `/match` | **Pad Match live** — tap a pad, get the polishes Matt pairs with it |
 | Reorder | `/orders` | Teaser — one-tap reorder + email reminders is phase 4 |
@@ -135,8 +147,9 @@ Tabs are one array in `components/TabBar.tsx`.
 
 0. ~~Look sign-off~~ → **built as real code**: landing scroll story + pad maker. Awaiting Matt's reaction.
 1. Pad maker → email to Matt — **built** (needs email env vars + Matt's address).
-2. 3D catalogue + WooCommerce products.
-3. Compatibility selector + simulator (DA + Rotary).
+2. 3D catalogue — **built** (Range tab; static catalogue, WooCommerce live data later).
+3. Compatibility selector — **built** as Pad Match (simulator dropped by owner).
+3b. Install, offline, share preview, analytics — **built** (analytics needs an account).
 4. Store sign-in, one-tap reorder, email reminders.
 
 ## Open items
@@ -152,3 +165,6 @@ Tabs are one array in `components/TabBar.tsx`.
 | 7 | WooCommerce REST API keys (read-only) | Phases 2, 4 |
 | 8 | Hosting account + who pays | Launch |
 | 9 | thepadking.com.au blocked by this dev environment's network policy | Research only |
+| 10 | Analytics: Plausible or GA4 account → `NEXT_PUBLIC_PLAUSIBLE_SRC` / `NEXT_PUBLIC_GA_ID` | Visit + event numbers |
+| 11 | Public domain for the app → `NEXT_PUBLIC_SITE_URL` (not needed on Vercel) | Share previews pointing at the live app |
+| 12 | Matt OK on the privacy line wording | Going live with requests |
