@@ -87,6 +87,7 @@ body {
   font-stretch: 125%;
   font-weight: 850;
   letter-spacing: -0.02em;
+  word-spacing: 0.08em;
   line-height: 0.92;
   text-transform: uppercase;
 }
@@ -451,8 +452,10 @@ body {
 }
 
 /* page entrance (app/template.tsx re-mounts on every tab) */
+/* fill "backwards" only: a lingering transform would turn the page into the
+   containing block for position: fixed children (chapter rail, overlays) */
 .pk-page {
-  animation: pk-page-in 460ms var(--pk-ease-out) both;
+  animation: pk-page-in 460ms var(--pk-ease-out) backwards;
 }
 @keyframes pk-page-in {
   from {
@@ -475,7 +478,68 @@ body {
   animation: pk-card-in 420ms var(--pk-ease-out) both;
 }
 
-/* ---------- install banner ---------- */
+/* ---------- history timeline (home) ---------- */
+/* giant outline numeral behind each chapter */
+.pk-ghost {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(140px, 30vw, 460px);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(201, 154, 74, 0.17);
+  user-select: none;
+}
+.pk-rise {
+  animation: pk-rise 1000ms var(--pk-ease-out) both;
+}
+@keyframes pk-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(8px);
+  }
+}
+.pk-ribbon-fill {
+  transform-origin: left;
+  animation: pk-ribbon 1800ms var(--pk-ease-out) 500ms both;
+}
+@keyframes pk-ribbon {
+  from {
+    transform: scaleX(0);
+  }
+}
+/* a light sweep across the Elite logo, clipped to the logo's own shape */
+.pk-logo-sheen {
+  -webkit-mask-image: url(/history/elite-logo-1284.webp);
+  mask-image: url(/history/elite-logo-1284.webp);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 248, 230, 0.55) 50%, transparent 58%);
+  background-size: 260% 100%;
+  animation: pk-logo-sheen 4.8s var(--pk-ease-in-out) 1s infinite;
+  mix-blend-mode: soft-light;
+}
+@keyframes pk-logo-sheen {
+  0% {
+    background-position: 130% 0;
+  }
+  55%,
+  100% {
+    background-position: -30% 0;
+  }
+}
+.pk-noscroll {
+  scrollbar-width: none;
+}
+.pk-noscroll::-webkit-scrollbar {
+  display: none;
+}
+
+
 .pk-install {
   animation: pk-sheet-in 520ms var(--pk-ease-out) both;
 }

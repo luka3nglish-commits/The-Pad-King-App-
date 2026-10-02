@@ -1,10 +1,10 @@
-import { HeroStory } from "@/components/hero/HeroStory";
+import { HistoryStory } from "@/components/history/HistoryStory";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export default function Home() {
   return (
     <>
-      <HeroStory />
+      <HistoryStory />
       <SiteFooter />
     </>
   );

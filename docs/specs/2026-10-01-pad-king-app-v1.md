@@ -83,6 +83,17 @@ Dropped by owner in favour of Pad Match (a motion simulator was built and remove
 
 One-tap reorder from WooCommerce order history (fallback: WooCommerce's "Order again"). Smart reminders by **email**, based on time since purchase × pad life (needs Matt's lifespan figure).
 
+### Home: The Pad King story (built, 2026-10-02)
+
+Matt's direction: the home page becomes a timeline of how his pads were created, generation by generation, Apple product-page style, with images and descriptions.
+
+- Chapters: **1993** (Matt starts detailing) → **The problem** (velcro failure: solvents, heat, 70 °C hot melt) → **2014** (European foam partners, 50–100+ h per pad, CNC 90/140/150 mm) → **GEN I** → **The glue** (120 °C on Velcro® brand loop vs ~70 °C) → **GEN II · Super Series · Nexus Foams** (non-porous interface layer) → **2024** (nearly ten foam companies incl. the world's largest) → **GEN III · Elite Series** (Japanese foam, Q4 2026; Australian-made 120/150/200 °C adhesives).
+- Every line is from Matt's site (sources in `lib/history.ts`). Years only where his site states them; the generations are labelled instead.
+- **Inference for Matt to confirm:** Gen I = foam on Velcro® loop with no interface layer (his site says Gen II added the interface).
+- Gen I → glue → Gen II is a pinned 3D sequence: the pad turns, the glue line glows, and Gen II's yellow interface stripe fades in, placed from Matt's side-on photo.
+- Photos: Matt's Gen II shots, cut out for the dark page. **Every pad with a stripe through the middle is a Gen II** (owner). The plain red disc photo is not used until Matt says what it is.
+- **Elite Series logo:** only in the Gen III chapter for now (owner); the app header/icon keep the current wordmark.
+
 ## Design system (built)
 
 ### Colour tokens — `app/globals.css`
@@ -135,7 +146,7 @@ v1 = the five features above. Anything else is a v2 conversation. Options/specs 
 
 | Tab | Route | State |
 |---|---|---|
-| Home | `/` | Spitfire Green scroll story |
+| Home | `/` | **The Pad King story** — scroll timeline 1993 → Elite Series |
 | Range | `/range` | **Showroom live** — all five pads in 3D, specs, sizes, buy links |
 | Build | `/build` | Custom pad maker (live) |
 | Match | `/match` | **Pad Match live** — tap a pad, get the polishes Matt pairs with it |
@@ -168,3 +179,7 @@ Tabs are one array in `components/TabBar.tsx`.
 | 10 | Analytics: Plausible or GA4 account → `NEXT_PUBLIC_PLAUSIBLE_SRC` / `NEXT_PUBLIC_GA_ID` | Visit + event numbers |
 | 11 | Public domain for the app → `NEXT_PUBLIC_SITE_URL` (not needed on Vercel) | Share previews pointing at the live app |
 | 12 | Matt OK on the privacy line wording | Going live with requests |
+| 13 | Gen I and Gen II launch years, and confirm the Gen I description (no interface layer) | Timeline accuracy |
+| 14 | What the plain red disc with black backing is | Using that photo |
+| 15 | Transparent / vector Elite Series logo (current one is cut out from a PNG) | Sharper Elite chapter |
+| 16 | Crosscut is a **raised** crosscut: much smaller squares standing slightly proud of the face (owner, 2026-10-02) | Pad maker accuracy |
