@@ -5,8 +5,9 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
 import { PadCanvas } from "@/components/three/PadCanvas";
-import { PadModel } from "@/components/three/PadModel";
+import { PadModel, type PadModelProps } from "@/components/three/PadModel";
 import type { PadShape } from "@/lib/pad/geometry";
+import type { Pad } from "@/lib/pads";
 
 /**
  * A single stock pad on a turntable: drag to rotate, slow idle spin, colour and
@@ -24,7 +25,9 @@ function frame(layout: Layout, w: number, h: number) {
   return wide ? { z: 5.5, x: 0, y: -0.44 } : { z: 5.8, x: 0, y: -0.28 };
 }
 
-function Rig({ shape, color, layout, print }: { shape: PadShape; color: string; layout: Layout; print?: "spitfire" }) {
+function Rig({ pad, layout }: { pad: Pad; layout: Layout }) {
+  const model = stockModel(pad);
+  const shape = model.build;
   const spin = useRef<THREE.Group>(null);
   const centre = useRef<THREE.Group>(null);
   const place = useRef<THREE.Group>(null);
@@ -46,7 +49,7 @@ function Rig({ shape, color, layout, print }: { shape: PadShape; color: string; 
         <group rotation={[-Math.PI / 2 + 0.15, 0, 0]}>
           <group ref={spin}>
             <group ref={centre}>
-              <PadModel build={shape} color={color} interfaceColor={color} backPrint={print} />
+              <PadModel {...model} />
             </group>
           </group>
         </group>
@@ -55,27 +58,33 @@ function Rig({ shape, color, layout, print }: { shape: PadShape; color: string; 
   );
 }
 
-export default function PadStage({
-  shape,
-  color,
-  label,
-  layout = "card",
-  print,
-}: {
-  shape: PadShape;
-  color: string;
-  label: string;
-  layout?: Layout;
-  print?: "spitfire";
-}) {
+export default function PadStage({ pad, label, layout = "card" }: { pad: Pad; label: string; layout?: Layout }) {
   return (
     <PadCanvas className="absolute inset-0 cursor-grab active:cursor-grabbing" camera={{ z: 5, fov: 30 }} label={label}>
-      <Rig shape={shape} color={color} layout={layout} print={print} />
+      <Rig pad={pad} layout={layout} />
     </PadCanvas>
   );
 }
 
-/** Stock pad shape for a catalogue entry: the shop pads' own edge, plain face. */
-export function stockShape(thickness: number): PadShape {
-  return { size: 75, thickness, edge: "stock", face: "flat" };
+/** Stock pad shape for a catalogue entry: its own edge (the shop pads' by default), plain face. */
+export function stockShape(pad: Pad): PadShape {
+  return { size: 75, thickness: pad.shape.thickness, edge: pad.shape.edge ?? "stock", face: "flat" };
+}
+
+/**
+ * Everything PadModel needs to draw a catalogue pad as photographed: foam,
+ * backing layer, velcro and print. A stock pad shows no separate interface
+ * layer from the outside, so it's drawn as more of the foam.
+ */
+export function stockModel(pad: Pad): PadModelProps {
+  const foam = pad.foam ?? pad.color;
+  return {
+    build: stockShape(pad),
+    color: foam,
+    seamless: true,
+    band: pad.backing && { from: pad.backing.from, to: 1.2, color: pad.backing.color, grain: 0.45 },
+    velcroColor: pad.velcro?.color,
+    velcroRibs: pad.velcro?.ribs,
+    backPrint: pad.print,
+  };
 }

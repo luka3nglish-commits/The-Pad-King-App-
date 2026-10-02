@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useId, useState } from "react";
-import { stockShape } from "@/components/three/PadStage";
 import { track } from "@/lib/analytics";
 import { PICKS, STAGE_LABEL, buyHref, picksFor, type Stage } from "@/lib/match";
 import { PADS, padById } from "@/lib/pads";
@@ -57,7 +56,7 @@ export function PadMatch() {
             style={{ background: `radial-gradient(70% 55% at 50% 55%, ${pad.color}22, transparent 70%)` }}
             aria-hidden
           />
-          <PadStage shape={stockShape(pad.shape.thickness)} color={pad.foam ?? pad.color} print={pad.print} label={`${pad.name} pad in 3D. Drag to rotate.`} />
+          <PadStage pad={pad} label={`${pad.name} pad in 3D. Drag to rotate.`} />
           <div className="pointer-events-none absolute inset-x-0 top-0 p-5 md:p-6">
             <p className="pk-mono text-[10px] uppercase tracking-[0.2em] text-muted">Selected pad</p>
             <p key={pad.id} className="pk-display pk-fade-up mt-2 text-[clamp(20px,5.3vw,40px)] md:text-[clamp(26px,3vw,40px)]">

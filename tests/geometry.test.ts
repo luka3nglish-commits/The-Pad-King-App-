@@ -124,6 +124,19 @@ describe("pad geometry", () => {
     for (let i = 1; i < prof.length; i++) expect(prof[i][1]).toBeGreaterThanOrEqual(prof[i - 1][1] - 1e-9); // climbs steadily
   });
 
+  it("straight pads (Frostbite): near-vertical side, face barely wider than the velcro", () => {
+    const Rv = 37.5;
+    const Hf = 14;
+    const prof = rawEdgeProfile("straight", Rv, Hf);
+    expect(prof[0][1]).toBeCloseTo(0);
+    expect(prof[0][0]).toBeLessThan(Rv); // the rim rounds off inside the velcro's line
+    const widest = Math.max(...prof.map((p) => p[0]));
+    expect(widest).toBeGreaterThan(Rv);
+    expect(widest).toBeLessThan(Rv + 1.6);
+    expect(prof[prof.length - 1]).toEqual([Rv, Hf]);
+    for (let i = 1; i < prof.length; i++) expect(prof[i][1]).toBeGreaterThanOrEqual(prof[i - 1][1] - 1e-9);
+  });
+
   it("traces grooves in the shader and raises bosses in geometry", () => {
     const xc = padState({ size: 75, thickness: 20, edge: "rounded", face: "crosscut" });
     const raised = padState({ size: 75, thickness: 20, edge: "rounded", face: "raised" });

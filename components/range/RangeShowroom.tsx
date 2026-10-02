@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
-import { stockShape } from "@/components/three/PadStage";
 import { track } from "@/lib/analytics";
 import { PADS, padById } from "@/lib/pads";
 
@@ -60,7 +59,7 @@ export function RangeShowroom() {
           style={{ background: `radial-gradient(55% 70% at 70% 55%, ${pad.color}26, transparent 70%)` }}
           aria-hidden
         />
-        <PadStage shape={stockShape(pad.shape.thickness)} color={pad.foam ?? pad.color} print={pad.print} layout="showroom" label={`${pad.name} in 3D. Drag to rotate.`} />
+        <PadStage pad={pad} layout="showroom" label={`${pad.name} in 3D. Drag to rotate.`} />
 
         <div className="pointer-events-none absolute inset-x-0 top-0 p-5 md:inset-y-0 md:right-auto md:flex md:w-[48%] md:flex-col md:justify-center md:p-10">
           <p className="pk-mono text-[11px] uppercase tracking-[0.2em] text-muted">

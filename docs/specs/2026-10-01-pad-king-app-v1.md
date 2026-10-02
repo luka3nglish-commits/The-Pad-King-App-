@@ -102,8 +102,19 @@ Luka photographed a real Spitfire Green (face, sides, back). From those photos:
 - **Foam colour**: the pad itself renders in its real lime — 3D albedo `#6FE271`, calibrated so the render matches the photo (face ≈ `#72E94F`) under the studio light. UI accents (swatch glows, range bands) stay the deeper `#3FA02C` per the earlier "rich, not fluro" direction; pad-picker chips use the real colour so they match the product.
 - **Foam grain**: open-cell grain sized to the close-ups (visible pores, not a smooth skin).
 - **Velcro**: neutral dark grey, with the real back print (Pad King shield, "PAD KING", "SPITFIRE GREEN ALL ROUNDER") lifted from the back photo into a mask texture (`public/textures/spitfire-back-print.png`).
-- Stock pads show no dark interface band (the real Spitfire has none visible); the pad maker keeps its labelled interface layer for the exploded view.
-- **Still to confirm**: exact face/velcro diameters and thickness (calipers), and photos of the other four pads to calibrate their colours the same way.
+- Stock pads show no dark interface band (the real Spitfire has none visible): the 3D draws that ring as more of the foam (`seamless`). The pad maker keeps its labelled interface layer for the exploded view.
+
+Then a real Frostbite (face, back, two sides):
+
+- **Straight edge** (`edge: "straight"`): near-vertical sides, the face only ~1.5 mm wider than the velcro per side, and a tighter rounded rim (0.2 × foam height).
+- **Proportions**: height ≈ 0.22 × face diameter, so it's drawn 17 mm high at the stage's 75 mm velcro (real sizes still to measure).
+- **Two foams**:
+  - Light-blue cutting foam, 3D albedo `#45CDFF`. The warm studio light caps the blue channel, so the render matches the photo's hue (≈ `#3DCCEE`) a touch darker.
+  - A charcoal backing foam over the back ~35 % of the side, albedo `#787C86`, finer grain than the blue.
+- **Velcro**: darker charcoal loop with fine knitted ribs (~170 across the back), no print. Velcro brightness is on the same scale as the Spitfire's, so the Frostbite's reads darker, as in the photos.
+- The UI colour stays `#7CB6DD`; chips use the real colour.
+- **Method** (for the next pads): sample the photo medians (white balance checked against the shed floor, which matches the Spitfire shots), then iterate the albedo in linear space until the render's median matches under the studio light.
+- **Still to confirm**: calipers (face/velcro diameters, height, which size was photographed), and photos of Afterburner, Lone Star and Midas.
 
 ## Design system (built)
 
@@ -119,7 +130,7 @@ Luka photographed a real Spitfire Green (face, sides, back). From those photos:
 | `--pk-orange` | `#E2621B` | burnt ember — the "touch": sheen edge, live dots, cut tags, errors. Never an area |
 | `--pk-spitfire` | `#3FA02C` | photo sample was `#6BE846`; deepened per owner. **Product only** — no UI uses green |
 
-**Owner direction (2026-10-01): all colours deep and rich, never fluro.** Pad foams: Spitfire `#3FA02C`, Afterburner `#5A9FCF`, Frostbite `#7CB6DD` (light blue, recently changed), Lone Star `#B01C26`, Midas `#C78E1F`. 3D foam sheen lifts only 30 % toward white so colours stay saturated.
+**Owner direction (2026-10-01): all colours deep and rich, never fluro.** Pad foams: Spitfire `#3FA02C`, Afterburner `#5A9FCF`, Frostbite `#7CB6DD` (light blue, recently changed; the 3D pad uses the photographed colours, see above), Lone Star `#B01C26`, Midas `#C78E1F`. 3D foam sheen lifts only 30 % toward white so colours stay saturated.
 
 ### Signature moves
 
@@ -195,3 +206,4 @@ Tabs are one array in `components/TabBar.tsx`.
 | 14 | What the plain red disc with black backing is | Using that photo |
 | 15 | Transparent / vector Elite Series logo (current one is cut out from a PNG) | Sharper Elite chapter |
 | 16 | Raised crosscut: exact square size and height (built as ~3.6 mm squares, ~1 mm proud) | Pad maker accuracy |
+| 17 | Calipers on the Spitfire and Frostbite (face Ø, velcro Ø, height, which size) + photos of Afterburner, Lone Star, Midas | 3D accuracy for the range |

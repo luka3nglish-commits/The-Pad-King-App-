@@ -7,6 +7,7 @@
  * buyUrl: the pad's product page on Matt's store (links confirmed by the owner).
  */
 
+import type { EdgeShape } from "@/lib/pad/geometry";
 import { FOAM } from "@/lib/pad/options";
 
 export const SITE = "https://thepadking.com.au";
@@ -29,8 +30,16 @@ export interface Pad {
   foam?: string;
   /** Logo print on the velcro back, where photographed. */
   print?: "spitfire";
-  /** Stock shape for the 3D render (mm). */
-  shape: { thickness: number };
+  /**
+   * Stock shape for the 3D render (mm, drawn at 75 mm velcro). Where the real
+   * pad is photographed, thickness and edge match its proportions; edge
+   * defaults to the shop pads' "stock" edge.
+   */
+  shape: { thickness: number; edge?: EdgeShape };
+  /** A second foam layer at the back, from a fraction of the foam height (face 0, velcro 1). */
+  backing?: { from: number; color: string };
+  /** Velcro loop where photographed: colour, and the period (mm) of knitted ribs if it has them. */
+  velcro?: { color: string; ribs?: number };
   tip?: string;
   sizes?: string[];
   specs: PadSpec[];
@@ -63,7 +72,10 @@ export const PADS: Pad[] = [
     role: "Medium to light cut",
     blurb: "Medium to light cut. Best for a one-step on medium-hard and hard paints.",
     color: "#7cb6dd",
-    shape: { thickness: 20 },
+    foam: "#45cdff",
+    shape: { thickness: 17, edge: "straight" },
+    backing: { from: 0.65, color: "#787c86" },
+    velcro: { color: "#323543", ribs: 0.43 },
     specs: [
       { label: "Cut", value: "Medium to light" },
       { label: "Best on", value: "One-step corrections on medium-hard and hard paints" },

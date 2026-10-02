@@ -11,9 +11,13 @@ import * as THREE from "three";
  *     per pixel with parallax occlusion mapping against an analytic height field,
  *     so the grid edges are perfectly crisp at any zoom and morph smoothly.
  *  3. Band — an optional coloured stripe around the side between two heights,
- *     like the interface layer through the middle of a Gen II pad. Off by default.
+ *     like the interface layer through the middle of a Gen II pad, or the
+ *     Frostbite's backing foam. Its own grain strength, since those layers are
+ *     finer than the foam. Off by default.
  *  4. Print (fabric only) — the logo printed on the velcro back, from a mask
  *     texture mapped flat across the back face. Off by default.
+ *  5. Ribs (fabric only) — the fine knitted ribs some velcro loop has across
+ *     the back face (the Frostbite's). Off by default.
  *
  * Object space is the pad's own (mm): axis +y, face at y=0 looking down (-y).
  */
@@ -27,6 +31,8 @@ export interface SurfaceUniforms {
   uBump: { value: number }; // micro-normal strength
   uBand: { value: THREE.Vector4 }; // from y, to y (mm), mix 0–1, edge softness (mm)
   uBandColor: { value: THREE.Color };
+  uBandGrain: { value: number }; // micro-normal strength inside the band, relative to the foam (1 = same)
+  uRib: { value: THREE.Vector2 }; // fabric: rib period (mm), strength 0–1
   uPrint: { value: THREE.Texture | null }; // fabric: print mask (red channel)
   uPrintParams: { value: THREE.Vector4 }; // on 0–1, back face y (mm), velcro radius (mm), unused
   uPrintColor: { value: THREE.Color };
@@ -57,7 +63,9 @@ uniform float uCell;
 uniform float uBump;
 uniform vec4 uBand;
 uniform vec3 uBandColor;
+uniform float uBandGrain;
 #ifdef PK_FABRIC
+uniform vec2 uRib;
 uniform sampler2D uPrint;
 uniform vec4 uPrintParams;
 uniform vec3 uPrintColor;
@@ -134,20 +142,33 @@ if (uPat.w > 0.001) {
   pkP = vec3(q.x, vPkObj.y + k, q.y);
 }
 #endif
+float pkBandM = 0.0;
 if (uBand.z > 0.001) {
-  float pkBandM = smoothstep(uBand.x - uBand.w, uBand.x + uBand.w, vPkObj.y) * (1.0 - smoothstep(uBand.y - uBand.w, uBand.y + uBand.w, vPkObj.y));
-  diffuseColor.rgb = mix(diffuseColor.rgb, uBandColor, pkBandM * uBand.z);
+  pkBandM = smoothstep(uBand.x - uBand.w, uBand.x + uBand.w, vPkObj.y) * (1.0 - smoothstep(uBand.y - uBand.w, uBand.y + uBand.w, vPkObj.y)) * uBand.z;
+  diffuseColor.rgb = mix(diffuseColor.rgb, uBandColor, pkBandM);
 }
+float pkGrain = mix(1.0, uBandGrain, pkBandM);
 #ifdef PK_FABRIC
+bool pkBack = vPkObj.y > uPrintParams.y - 0.05;
 // the print sits on the back face only (the flat top of the velcro)
-if (uPrintParams.x > 0.001 && vPkObj.y > uPrintParams.y - 0.05) {
+if (uPrintParams.x > 0.001 && pkBack) {
   vec2 puv = vec2(vPkObj.x, -vPkObj.z) / (2.0 * uPrintParams.z) + 0.5;
   float pm = texture2D(uPrint, puv).r;
   diffuseColor.rgb = mix(diffuseColor.rgb, uPrintColor, pm * uPrintParams.x);
 }
+// knitted ribs across the back; faded to their average tone once they get smaller than a pixel
+float pkRib = 0.0;
+float pkRibW = fwidth(vPkObj.z); // outside the branch: derivatives need every pixel of the quad
+if (uRib.y > 0.001 && pkBack) {
+  float ph = 6.2831853 * vPkObj.z / uRib.x;
+  float vis = 1.0 - smoothstep(0.25, 0.6, pkRibW / uRib.x);
+  float tone = mix(0.925, 0.7 + 0.45 * (0.5 + 0.5 * cos(ph)), vis);
+  diffuseColor.rgb *= mix(1.0, tone, uRib.y);
+  pkRib = -sin(ph) * vis * uRib.y;
+}
 #endif
 float pkCellTone = pkFbm(pkP / uCell);
-diffuseColor.rgb *= (0.9 + 0.16 * pkCellTone) * mix(1.0, 0.32, pkCav * pkCav);
+diffuseColor.rgb *= (0.98 + 0.16 * pkGrain * (pkCellTone - 0.5)) * mix(1.0, 0.32, pkCav * pkCav);
 `;
 
 /** Replaces normal maps: groove normals + foam-cell micro normals. */
@@ -174,8 +195,11 @@ const FRAG_NORMAL = /* glsl */ `
     ) / e;
     vec3 gv = g.x * vPkT + g.z * vPkB - g.y * vPkN;
     gv -= dot(gv, normal) * normal;
-    normal = normalize(normal - uBump * fade * gv);
+    normal = normalize(normal - uBump * pkGrain * fade * gv);
   }
+#ifdef PK_FABRIC
+  if (pkRib != 0.0) normal = normalize(normal + 0.55 * pkRib * vPkB);
+#endif
 }
 `;
 
@@ -188,6 +212,8 @@ export function createSurfaceMaterial(kind: SurfaceKind, params: THREE.MeshPhysi
     uBump: { value: kind === "fabric" ? 0.7 : 0.3 },
     uBand: { value: new THREE.Vector4(0, 0, 0, 0.35) },
     uBandColor: { value: new THREE.Color("#000000") },
+    uBandGrain: { value: 1 },
+    uRib: { value: new THREE.Vector2(0.45, 0) },
     uPrint: { value: null },
     uPrintParams: { value: new THREE.Vector4(0, 0, 1, 0) },
     uPrintColor: { value: new THREE.Color("#a3abb8") },

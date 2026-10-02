@@ -63,4 +63,24 @@ describe("pad catalogue", () => {
       expect(pad.color).toMatch(/^#[0-9a-f]{6}$/i);
     }
   });
+
+  it("3D looks are well-formed where a pad has been photographed", () => {
+    const hex = /^#[0-9a-f]{6}$/i;
+    for (const pad of PADS) {
+      if (pad.foam) expect(pad.foam).toMatch(hex);
+      if (pad.backing) {
+        expect(pad.backing.color).toMatch(hex);
+        expect(pad.backing.from).toBeGreaterThan(0.3); // a layer at the back, not the face
+        expect(pad.backing.from).toBeLessThan(1);
+      }
+      if (pad.velcro) {
+        expect(pad.velcro.color).toMatch(hex);
+        if (pad.velcro.ribs !== undefined) expect(pad.velcro.ribs).toBeGreaterThan(0.2);
+      }
+    }
+    const frost = PADS.find((p) => p.id === "frostbite")!;
+    expect(frost.shape.edge).toBe("straight");
+    expect(frost.backing).toBeDefined();
+    expect(frost.print).toBeUndefined(); // the real Frostbite back has no print
+  });
 });

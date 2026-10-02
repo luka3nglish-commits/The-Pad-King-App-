@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { PadCanvas } from "@/components/three/PadCanvas";
 import { PadModel } from "@/components/three/PadModel";
-import { stockShape } from "@/components/three/PadStage";
+import { stockModel } from "@/components/three/PadStage";
 import { PADS } from "@/lib/pads";
 
 /**
@@ -32,7 +32,7 @@ export default function OgScene() {
           <group key={p.id} position={[i * 0.5, i * 0.03, -i * 0.4]} rotation={[0.06, 0.6, 0]}>
             <group rotation={[-Math.PI / 2, 0, 0]}>
               <group position={[0, -p.shape.thickness * 0.01, 0]}>
-                <PadModel build={stockShape(p.shape.thickness)} color={p.foam ?? p.color} interfaceColor={p.foam ?? p.color} backPrint={p.print} />
+                <PadModel {...stockModel(p)} />
               </group>
             </group>
           </group>
