@@ -101,6 +101,9 @@ Customer details (name, email, phone) never go into events.
 | Home timeline copy (chapters, causes, Gen II points, Elite claims) | `lib/history.ts` |
 | Home timeline layout and animation | `components/history/` |
 | Matt's photos and the Elite logo (cut out, WebP) | `public/history/` |
+| Real-pad textures (Spitfire back print) | `public/textures/` |
+| How each stock pad is drawn in 3D (foam, backing layer, velcro, edge) | `lib/pads.ts` + `stockModel` in `components/three/PadStage.tsx` |
+| Stock pad edge (measured from photos) | `lib/pad/geometry.ts` → `"stock"` |
 | Pad maker UI + request form | `components/maker/` |
 | Stock pads (names, colours, specs, sizes, buy links) | `lib/pads.ts` |
 | Pad Match data (polishes, Matt's notes, stockist links) | `lib/match.ts` |

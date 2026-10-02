@@ -44,7 +44,7 @@ function Rig({ build, explodeRef, markerEls }: { build: PadBuild; explodeRef: Mu
         <group rotation={[-Math.PI / 2 + 0.15, 0, 0]}>
           <group ref={spin}>
             <group ref={centre}>
-              <PadModel build={build} explodeRef={explodeRef} markerEls={markerEls} explodeScale={1.5} />
+              <PadModel build={build} explodeRef={explodeRef} markerEls={markerEls} explodeScale={1.5} backPrint="spitfire" />
             </group>
           </group>
         </group>

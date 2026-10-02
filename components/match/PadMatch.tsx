@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useId, useState } from "react";
-import { stockShape } from "@/components/three/PadStage";
 import { track } from "@/lib/analytics";
 import { PICKS, STAGE_LABEL, buyHref, picksFor, type Stage } from "@/lib/match";
 import { PADS, padById } from "@/lib/pads";
@@ -57,7 +56,7 @@ export function PadMatch() {
             style={{ background: `radial-gradient(70% 55% at 50% 55%, ${pad.color}22, transparent 70%)` }}
             aria-hidden
           />
-          <PadStage shape={stockShape(pad.shape.thickness)} color={pad.color} label={`${pad.name} pad in 3D. Drag to rotate.`} />
+          <PadStage pad={pad} label={`${pad.name} pad in 3D. Drag to rotate.`} />
           <div className="pointer-events-none absolute inset-x-0 top-0 p-5 md:p-6">
             <p className="pk-mono text-[10px] uppercase tracking-[0.2em] text-muted">Selected pad</p>
             <p key={pad.id} className="pk-display pk-fade-up mt-2 text-[clamp(20px,5.3vw,40px)] md:text-[clamp(26px,3vw,40px)]">
@@ -87,7 +86,8 @@ export function PadMatch() {
                 <input type="radio" name={name} className="sr-only" checked={p.id === padId} onChange={() => choose(p.id)} />
                 <span
                   className="size-9 rounded-full shadow-[inset_0_-4px_8px_rgba(0,0,0,0.25),0_0_0_1px_rgba(245,242,234,0.12)]"
-                  style={{ background: `radial-gradient(circle at 35% 30%, ${p.color}, ${p.color}cc 60%, ${p.color}88)` }}
+                  // product chip: the pad's real foam colour, matching the 3D render
+                style={{ background: `radial-gradient(circle at 35% 30%, ${p.foam ?? p.color}, ${p.foam ?? p.color}cc 60%, ${p.foam ?? p.color}88)` }}
                   aria-hidden
                 />
                 <span className="text-center text-[11px] font-semibold leading-tight sm:text-[12px]">

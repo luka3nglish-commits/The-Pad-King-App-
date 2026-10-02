@@ -26,16 +26,41 @@ export interface PadModelProps {
   color?: string;
   /**
    * A stripe around the side, as fractions of the foam height measured from the
-   * face (0) to the back (1) — e.g. a Gen II pad's interface layer. `bandRef`
-   * (0–1) fades it in and out without re-rendering.
+   * face (0) to the back (1) — e.g. a Gen II pad's interface layer, or the
+   * Frostbite's backing foam. `grain` scales the foam's pores inside it (finer
+   * layers < 1). `bandRef` (0–1) drives it without re-rendering; without one it
+   * fades in and out on its own when the prop comes and goes.
    */
-  band?: { from: number; to: number; color: string };
+  band?: PadBand;
   bandRef?: MutableRefObject<number>;
   /** 0–1: heats the glue line (and warms the velcro) with an orange glow. */
   glowRef?: MutableRefObject<number>;
   /** Colour of the thin layer between foam and velcro. Defaults to a dark interface grey. */
   interfaceColor?: string;
+  /**
+   * Draw that layer as more of the foam it sits in (with any band over it):
+   * the shop pads show no separate interface from the outside.
+   */
+  seamless?: boolean;
+  /** Velcro loop colour. Defaults to the Spitfire's grey. */
+  velcroColor?: string;
+  /** Period (mm) of the knitted ribs across the velcro back, where the loop has them. */
+  velcroRibs?: number;
+  /** The logo printed on the velcro back (only Spitfire's is photographed so far). */
+  backPrint?: "spitfire";
 }
+
+export interface PadBand {
+  from: number;
+  to: number;
+  color: string;
+  grain?: number;
+}
+
+/** Print masks lifted from Luka's photos of the real pads (public/textures). */
+const PRINTS = { spitfire: "/textures/spitfire-back-print.png" } as const;
+/** Velcro loop as photographed on the Spitfire: a neutral dark grey (the studio light is warm). */
+export const VELCRO = "#4e5056";
 
 const _v = new THREE.Vector3();
 const _s = new THREE.Vector3();
@@ -44,19 +69,30 @@ const _right = new THREE.Vector3();
 const WHITE = new THREE.Color("#ffffff");
 
 const GLOW = new THREE.Color("#e2621b");
+/** How far the velcro's sheen lifts towards white (the Spitfire's grey loop → #8e9198). */
+const VELCRO_SHEEN = 0.37;
 
 export function PadModel({
   build,
   explodeRef,
   markerEls,
   explodeScale = 1,
-  color = FOAM.color,
+  color = FOAM.foam,
   band,
   bandRef,
   glowRef,
   interfaceColor = "#3c4048",
+  seamless = false,
+  velcroColor = VELCRO,
+  velcroRibs,
+  backPrint,
 }: PadModelProps) {
   const targetColor = useMemo(() => new THREE.Color(color), [color]);
+  const targetIface = useMemo(() => new THREE.Color(interfaceColor), [interfaceColor]);
+  const targetVelcro = useMemo(() => new THREE.Color(velcroColor), [velcroColor]);
+  // the band fades out on its own when the prop goes, so keep drawing the last one
+  const lastBand = useRef(band);
+  const bandMix = useRef(band ? 1 : 0);
   const anchors = useRef<(THREE.Object3D | null)[]>([]);
   const set = useMemo(() => new PadGeometrySet(padState(build)), []); // eslint-disable-line react-hooks/exhaustive-deps
   const morph = useRef({ start: 0, active: false });
@@ -86,21 +122,32 @@ export function PadModel({
     };
     const face = createSurfaceMaterial("face", foamParams);
     const foam = createSurfaceMaterial("foam", foamParams);
+    // open-cell grain sized to what Luka's close-ups show: visible pores, not a smooth skin
+    face.uniforms.uCell.value = 0.55;
+    face.uniforms.uBump.value = 0.36;
+    foam.uniforms.uCell.value = 0.85;
+    foam.uniforms.uBump.value = 0.5;
     const iface = createSurfaceMaterial("foam", { color: interfaceColor, roughness: 0.62, metalness: 0 });
     iface.uniforms.uBump.value = 0.2;
     const velcro = createSurfaceMaterial("fabric", {
-      color: "#545a66",
+      color: velcroColor,
       roughness: 1,
       sheen: 1,
       sheenRoughness: 0.8,
-      sheenColor: new THREE.Color("#8a8a98"),
+      sheenColor: new THREE.Color(velcroColor).lerp(WHITE, VELCRO_SHEEN),
     });
-    return { face, foam, iface, velcro };
+    // one print texture for the session; whether it shows is a per-frame uniform
+    const tex = new THREE.TextureLoader().load(PRINTS.spitfire);
+    tex.colorSpace = THREE.NoColorSpace;
+    tex.anisotropy = 4;
+    velcro.uniforms.uPrint.value = tex;
+    return { face, foam, iface, velcro, tex };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- colour changes are blended in useFrame
 
   useEffect(
     () => () => {
-      for (const m of Object.values(materials)) m.material.dispose();
+      for (const m of [materials.face, materials.foam, materials.iface, materials.velcro]) m.material.dispose();
+      materials.tex.dispose();
     },
     [materials],
   );
@@ -112,24 +159,37 @@ export function PadModel({
       set.apply(easeInOutCubic(t));
       if (t >= 1) m.active = false;
     }
-    // blend towards the requested foam colour (sheen follows, lifted towards white)
+    // blend towards the requested colours (sheen follows, lifted towards white)
+    const k = 1 - Math.exp(-dt * 7);
     for (const m of [materials.face.material, materials.foam.material]) {
       if (!m.color.equals(targetColor)) {
-        m.color.lerp(targetColor, 1 - Math.exp(-dt * 7));
+        m.color.lerp(targetColor, k);
         m.sheenColor.copy(m.color).lerp(WHITE, 0.3);
       }
+    }
+    if (!materials.iface.material.color.equals(targetIface)) materials.iface.material.color.lerp(targetIface, k);
+    const vm = materials.velcro.material;
+    if (!vm.color.equals(targetVelcro)) {
+      vm.color.lerp(targetVelcro, k);
+      vm.sheenColor.copy(vm.color).lerp(WHITE, VELCRO_SHEEN);
     }
     const u = materials.face.uniforms;
     u.uPat.value.set(set.pat[0], set.pat[1], set.pat[2], set.pat[3]);
     u.uFaceR.value.set(set.faceR[0], set.faceR[1]);
-    if (band) {
+    if (band) lastBand.current = band;
+    bandMix.current = band && bandRef ? bandRef.current : THREE.MathUtils.damp(bandMix.current, band ? 1 : 0, 7, dt);
+    const b = lastBand.current;
+    if (b) {
       const hf = dimsOf(build).Hf;
-      const mix = bandRef ? bandRef.current : 1;
       for (const m of [materials.foam, materials.face]) {
-        m.uniforms.uBand.value.set(band.from * hf, band.to * hf, mix, 0.35);
-        m.uniforms.uBandColor.value.set(band.color);
+        m.uniforms.uBand.value.set(b.from * hf, b.to * hf, bandMix.current, 0.35);
+        m.uniforms.uBandColor.value.set(b.color);
+        m.uniforms.uBandGrain.value = b.grain ?? 1;
       }
     }
+    const dd = dimsOf(build);
+    materials.velcro.uniforms.uPrintParams.value.set(backPrint ? 1 : 0, dd.T, dd.Rv, 0);
+    materials.velcro.uniforms.uRib.value.set(velcroRibs ?? 1, velcroRibs ? 1 : 0);
     if (glowRef) {
       // the glue line between foam and velcro runs hot; the velcro only warms
       materials.iface.material.emissive.copy(GLOW).multiplyScalar(glowRef.current * 2.4);
@@ -181,7 +241,7 @@ export function PadModel({
         <mesh geometry={set.geo.hole} material={materials.foam.material} />
         <mesh geometry={set.geo.top} material={materials.foam.material} />
       </group>
-      <mesh ref={ifaceRef} geometry={set.geo.iface} material={materials.iface.material}>
+      <mesh ref={ifaceRef} geometry={set.geo.iface} material={seamless ? materials.foam.material : materials.iface.material}>
         {markerEls && anchor(1, d.Hf + INTERFACE_T / 2)}
       </mesh>
       <mesh ref={velcroRef} geometry={set.geo.velcro} material={materials.velcro.material}>

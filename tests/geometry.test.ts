@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  rawEdgeProfile,
   FACE_RINGS,
   PROFILE_N,
   SEG,
@@ -107,6 +108,33 @@ describe("pad geometry", () => {
     expect(windingAgreement(s.velcro, annulusIndices(), fromNormals(s.velcro))).toBe(1);
     // the face looks down, out of the pad
     expect(windingAgreement(s.face, ringIndices(FACE_RINGS + 1), () => [0, -1, 0])).toBeGreaterThan(0.97);
+  });
+
+  it("stock pads: face wider than the velcro, rounded rim, side tapering back to the velcro", () => {
+    const Rv = 37.5;
+    const Hf = 17;
+    const prof = rawEdgeProfile("stock", Rv, Hf);
+    const [faceR, faceY] = prof[0];
+    expect(faceY).toBeCloseTo(0);
+    expect(Math.abs(faceR - Rv)).toBeLessThan(2); // the flat face is about the velcro's width
+    const widest = Math.max(...prof.map((p) => p[0]));
+    expect(widest).toBeGreaterThan(Rv + 3); // the rim rolls out past the velcro before the taper
+    expect(widest).toBeLessThanOrEqual(Rv + 7.5);
+    expect(prof[prof.length - 1]).toEqual([Rv, Hf]); // meets the velcro
+    for (let i = 1; i < prof.length; i++) expect(prof[i][1]).toBeGreaterThanOrEqual(prof[i - 1][1] - 1e-9); // climbs steadily
+  });
+
+  it("straight pads (Frostbite): near-vertical side, face barely wider than the velcro", () => {
+    const Rv = 37.5;
+    const Hf = 14;
+    const prof = rawEdgeProfile("straight", Rv, Hf);
+    expect(prof[0][1]).toBeCloseTo(0);
+    expect(prof[0][0]).toBeLessThan(Rv); // the rim rounds off inside the velcro's line
+    const widest = Math.max(...prof.map((p) => p[0]));
+    expect(widest).toBeGreaterThan(Rv);
+    expect(widest).toBeLessThan(Rv + 1.6);
+    expect(prof[prof.length - 1]).toEqual([Rv, Hf]);
+    for (let i = 1; i < prof.length; i++) expect(prof[i][1]).toBeGreaterThanOrEqual(prof[i - 1][1] - 1e-9);
   });
 
   it("traces grooves in the shader and raises bosses in geometry", () => {

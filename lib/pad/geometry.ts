@@ -16,8 +16,14 @@ import type { EdgeId, FaceId, PadBuild } from "./options";
 
 /** Faces the geometry can draw. "flat" is the stock pad face (not a maker option). */
 export type FaceShape = FaceId | "flat";
+/**
+ * Edges the geometry can draw, beyond the maker's options: "stock" is the shop
+ * pads' own edge (measured off the Spitfire), "straight" the Frostbite's.
+ */
+export type EdgeShape = EdgeId | "stock" | "straight";
 /** Anything the renderer can draw: a maker build, or a stock pad. */
-export type PadShape = Omit<PadBuild, "face" | "size" | "thickness"> & {
+export type PadShape = Omit<PadBuild, "edge" | "face" | "size" | "thickness"> & {
+  edge: EdgeShape;
   face: FaceShape;
   size: number;
   thickness: number;
@@ -70,8 +76,32 @@ function arc(cx: number, cy: number, r: number, a0: number, a1: number, n = 12):
   return out;
 }
 
-export function rawEdgeProfile(edge: EdgeId, Rv: number, Hf: number): Vec2[] {
+/**
+ * A shop pad's side: a rim of radius c rolling off the face, then a straight
+ * side that runs from F past the velcro back in to it.
+ */
+function rolledSide(Rv: number, Hf: number, F: number, c: number): Vec2[] {
+  const len = Math.hypot(Hf, F);
+  const n: Vec2 = [Hf / len, F / len]; // outward normal of the side wall
+  // centre of the rim arc: c above the face and c inside the side wall
+  const cx = Rv + (-c - n[1] * (c - Hf)) / n[0];
+  return [...arc(cx, c, c, -Math.PI / 2, Math.atan2(n[1], n[0]), 16), [Rv, Hf]];
+}
+
+export function rawEdgeProfile(edge: EdgeShape, Rv: number, Hf: number): Vec2[] {
   switch (edge) {
+    case "stock": {
+      // The shop pads, measured off Luka's Spitfire photos and Matt's Gen II shots:
+      // the face is a little wider than the velcro (Matt sizes pads velcro/face,
+      // e.g. 75/90), with a soft rounded rim, then a straight side tapering back
+      // in to the velcro.
+      // overhang per side; rim radius a soft roll, not a lip
+      return rolledSide(Rv, Hf, Math.min(7.5, 0.2 * Rv), 0.3 * Hf);
+    }
+    case "straight":
+      // The Frostbite, off Luka's photos: near-vertical sides (the face only
+      // just wider than the velcro) and a tighter rounded rim.
+      return rolledSide(Rv, Hf, Math.min(1.5, 0.04 * Rv), 0.2 * Hf);
     case "rounded": {
       const f = Math.min(0.42 * Hf, 0.3 * Rv);
       return [...arc(Rv - f, f, f, -Math.PI / 2, 0, 16), [Rv, Hf]];
@@ -131,7 +161,7 @@ export function resample(poly: Vec2[], n: number): Vec2[] {
   return out;
 }
 
-export function edgeProfile(edge: EdgeId, Rv: number, Hf: number, n = PROFILE_N): Vec2[] {
+export function edgeProfile(edge: EdgeShape, Rv: number, Hf: number, n = PROFILE_N): Vec2[] {
   return resample(rawEdgeProfile(edge, Rv, Hf), n);
 }
 

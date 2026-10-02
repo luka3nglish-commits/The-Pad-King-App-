@@ -13,8 +13,13 @@ export const FOAM = {
   name: "Spitfire Green",
   line: "All Rounder",
   code: "SPF",
-  /** Sampled from Matt's photo (#6BE846), then deepened per owner: rich, not fluro. */
+  /** UI accent (swatches, glows): sampled from Matt's photo, deepened per owner — rich, not fluro. */
   color: "#3fa02c",
+  /**
+   * The 3D foam itself, calibrated so the render matches Luka's photos of a real
+   * Spitfire under the app's studio light (photo face ≈ #72E94F).
+   */
+  foam: "#6fe271",
   summary: "Balanced light to medium cut. Corrects, polishes and finishes in one pad.",
 } as const;
 
