@@ -100,7 +100,7 @@ describe("pad geometry", () => {
   });
 
   it("winds every surface outward", () => {
-    const s = padState({ size: 75, thickness: 20, edge: "rounded", face: "raised" });
+    const s = padState({ size: 75, thickness: 20, edge: "rounded", face: "flower" });
     expect(windingAgreement(s.side, ringIndices(PROFILE_N), fromNormals(s.side))).toBe(1);
     expect(windingAgreement(s.hole, ringIndices(2, true), fromNormals(s.hole))).toBe(1);
     expect(windingAgreement(s.top, ringIndices(2), fromNormals(s.top))).toBe(1);
@@ -137,9 +137,10 @@ describe("pad geometry", () => {
     for (let i = 1; i < prof.length; i++) expect(prof[i][1]).toBeGreaterThanOrEqual(prof[i - 1][1] - 1e-9);
   });
 
-  it("traces grooves in the shader and raises bosses in geometry", () => {
+  it("traces grooves in the shader, raises the flower in geometry, keeps flat flat", () => {
     const xc = padState({ size: 75, thickness: 20, edge: "rounded", face: "crosscut" });
-    const raised = padState({ size: 75, thickness: 20, edge: "rounded", face: "raised" });
+    const flower = padState({ size: 75, thickness: 20, edge: "rounded", face: "flower" });
+    const flat = padState({ size: 75, thickness: 20, edge: "rounded", face: "flat" });
     const maxY = (a: Float32Array) => a.reduce((m, v, i) => (i % 3 === 1 ? Math.max(m, v) : m), -Infinity);
     // raised crosscut: geometry stays flat; the shader traces small squares standing just proud
     expect(maxY(xc.face.pos)).toBeCloseTo(0);
@@ -151,7 +152,11 @@ describe("pad geometry", () => {
     expect(grooveDepth(xc.pat, s * 2, s * 0.5, rf, rh)).toBeCloseTo(xc.pat[3], 1); // on a slit
     expect(grooveDepth(xc.pat, s * 1.5, s * 0.5, rf, rh)).toBeCloseTo(0); // middle of a block
     expect(grooveDepth(xc.pat, rf, 0, rf, rh)).toBeCloseTo(0); // fades out at the rim
-    expect(raised.pat[3]).toBe(0);
-    expect(raised.minY).toBeLessThan(-1);
+    expect(flower.pat[3]).toBe(0);
+    expect(flower.minY).toBeLessThan(-1);
+    // flat: no grooves, nothing standing proud
+    expect(flat.pat[3]).toBe(0);
+    expect(maxY(flat.face.pos)).toBeCloseTo(0);
+    expect(flat.face.pos.filter((_, i) => i % 3 === 1).every((y) => Math.abs(y) < 1e-6)).toBe(true);
   });
 });

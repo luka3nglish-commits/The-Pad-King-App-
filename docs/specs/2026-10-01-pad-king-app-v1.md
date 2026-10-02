@@ -38,7 +38,7 @@ Customer builds a pad; the 3D model morphs live with every choice; the build is 
 | Size | 40, 65, 75 mm | **Velcro diameter** — the face that sits on the backing plate. Custom-only sizes (stock Spitfire is 3"/5"/6") |
 | Thickness | 12, 15, 16, 18, 20, 22 mm | Total height, velcro to face |
 | Edge | Rounded, Full Tilt, Trapeze, Cone, **Splay** | "Rupes-style" renamed **Splay**: splayed side flaring past the velcro with a bevelled lower lip (Rupes BigFoot description). **Full Tilt shape unknown** — modelled as a deep bevel, provisional |
-| Face | Raised, Crosscut, Waffle, Flower Power | Raised = centre boss. Crosscut = **raised crosscut** (Matt, 2026-10-02): a fine grid of much smaller squares standing slightly proud of the face, like the Scholl Spider. Shown as "Raised Crosscut"; build code stays XCT. Waffle = shallow square channels. Flower Power = raised flower-shaped face, **still in testing** (badged "In testing") |
+| Face | Flat, Crosscut, Waffle, Flower Power | Flat = the standard flat face; it replaced the Raised centre-boss face (owner, 2026-10-02). Crosscut = **raised crosscut** (Matt, 2026-10-02): a fine grid of much smaller squares standing slightly proud of the face, like the Scholl Spider. Shown as "Raised Crosscut"; build code stays XCT. Waffle = shallow square channels. Flower Power = raised flower-shaped face, **still in testing** (badged "In testing") |
 
 All 4 × 5 × 6 × 3 = **360 combinations can be made** (owner-confirmed).
 

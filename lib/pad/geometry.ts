@@ -3,7 +3,7 @@
  *
  * Coordinate system (millimetres):
  *   - pad axis = +y, face at y = 0, velcro (backing-plate side) at the top
- *   - grooves cut UP into the foam (+y), raised bosses stand proud of the face (-y)
+ *   - grooves cut UP into the foam (+y), raised shapes stand proud of the face (-y)
  *
  * Every pad shape is reduced to fixed-length Float32Arrays (same vertex count for
  * every build), so switching options is a straight per-vertex lerp: a true morph,
@@ -14,8 +14,8 @@
  */
 import type { EdgeId, FaceId, PadBuild } from "./options";
 
-/** Faces the geometry can draw. "flat" is the stock pad face (not a maker option). */
-export type FaceShape = FaceId | "flat";
+/** Faces the geometry can draw: the maker's options ("flat" is also every stock pad's face). */
+export type FaceShape = FaceId;
 /**
  * Edges the geometry can draw, beyond the maker's options: "stock" is the shop
  * pads' own edge (measured off the Spitfire), "straight" the Frostbite's.
@@ -218,11 +218,6 @@ export function grooveDepth(p: GroovePattern, x: number, z: number, rf: number, 
 
 export function faceHeight(face: FaceShape, x: number, z: number, c: FaceCtx): number {
   switch (face) {
-    case "raised": {
-      const r = Math.hypot(x, z);
-      const rb = 0.6 * c.rf;
-      return -bossHeight(c.Hf) * (1 - smoothstep(rb - 0.5, rb + 0.5, r));
-    }
     case "flower": {
       // PROVISIONAL — still in testing; six rounded petals.
       const r = Math.hypot(x, z);
@@ -237,7 +232,7 @@ export function faceHeight(face: FaceShape, x: number, z: number, c: FaceCtx): n
 
 /** Height where the face meets the centre hole (constant around the hole). */
 export function faceHeightAtHole(face: FaceShape, c: FaceCtx) {
-  return face === "raised" || face === "flower" ? -bossHeight(c.Hf) : 0;
+  return face === "flower" ? -bossHeight(c.Hf) : 0;
 }
 
 /* ------------------------------------------------------------------ */
