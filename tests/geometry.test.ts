@@ -47,9 +47,9 @@ const fromNormals = (part: Part) => (vi: number): [number, number, number] => [
 ];
 
 describe("pad options", () => {
-  it("covers all 360 owner-confirmed combinations", () => {
-    expect(COMBINATIONS).toBe(360);
-    expect([...allBuilds()]).toHaveLength(360);
+  it("covers all 450 owner-confirmed combinations", () => {
+    expect(COMBINATIONS).toBe(450);
+    expect([...allBuilds()]).toHaveLength(450);
   });
 
   it("round-trips builds and rejects junk", () => {
@@ -87,7 +87,7 @@ describe("pad geometry", () => {
         }
   });
 
-  it("builds finite, fixed-length arrays for all 360 builds (so any two can morph)", () => {
+  it("builds finite, fixed-length arrays for every build (so any two can morph)", () => {
     const ref = padState({ size: 75, thickness: 20, edge: "splay", face: "crosscut" });
     for (const b of allBuilds()) {
       const s = padState(b);
@@ -136,6 +136,25 @@ describe("pad geometry", () => {
     expect(widest).toBeLessThan(Rv + 1.6);
     expect(prof[prof.length - 1]).toEqual([Rv, Hf]);
     for (let i = 1; i < prof.length; i++) expect(prof[i][1]).toBeGreaterThanOrEqual(prof[i - 1][1] - 1e-9);
+  });
+
+  it("DRC Hole: a dish recessed round the hole, flat floor, sloping up to a flat face", () => {
+    const s = padState({ size: 75, thickness: 20, edge: "rounded", face: "drc" });
+    const [rf, rh] = s.faceR;
+    const { Hf } = dimsOf({ size: 75, thickness: 20 });
+    const ys = Array.from({ length: FACE_RINGS + 1 }, (_, i) => s.face.pos[i * SEG * 3 + 1]);
+    expect(ys[0]).toBeGreaterThan(2); // recessed a few mm at the hole
+    expect(ys[0]).toBeLessThan(0.3 * Hf);
+    expect(ys[0]).toBeCloseTo(ys[5]); // flat floor
+    expect(ys[FACE_RINGS]).toBeCloseTo(0); // the face itself is flat
+    for (let i = 1; i <= FACE_RINGS; i++) expect(ys[i]).toBeLessThanOrEqual(ys[i - 1] + 1e-6); // only climbs out
+    // the dish spans roughly the middle third of the face
+    const rAt = (i: number) => rh + ((rf - rh) * i) / FACE_RINGS;
+    const edge = ys.findIndex((y) => y < 0.01);
+    expect(rAt(edge) / rf).toBeGreaterThan(0.38);
+    expect(rAt(edge) / rf).toBeLessThan(0.5);
+    // the hole wall starts at the dish floor
+    expect(Math.min(...Array.from({ length: s.hole.pos.length / 3 }, (_, i) => s.hole.pos[i * 3 + 1]))).toBeCloseTo(ys[0]);
   });
 
   it("traces every face pattern in the shader and keeps the geometry flat", () => {

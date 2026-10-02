@@ -41,6 +41,7 @@ export const FACES = [
   { id: "flat", name: "Flat", code: "FLT", blurb: "The standard flat face. Even contact across the whole pad." },
   { id: "crosscut", name: "Raised Crosscut", code: "XCT", blurb: "A fine grid of small squares standing just proud of the face." },
   { id: "waffle", name: "Waffle", code: "WFL", blurb: "Shallow square channels hold polish and spread it evenly." },
+  { id: "drc", name: "DRC Hole", code: "DRC", blurb: "A wide, shallow dish recessed round the centre hole." },
   { id: "flower", name: "Flower Power", code: "FLW", blurb: "Rings of flower-petal grooves across the face. In testing.", provisional: true },
 ] as const;
 

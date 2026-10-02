@@ -16,7 +16,7 @@ npm run dev          # http://localhost:3000
 ```bash
 npm run typecheck
 npm run lint
-npm test             # geometry (all 360 builds), Pad Match data, build-request validation
+npm test             # geometry (every build), Pad Match data, build-request validation
 npm run build
 ```
 

@@ -51,6 +51,14 @@ export function FaceIcon({ face }: { face: FaceId }) {
       </>
     );
   if (face === "waffle") detail = <g fill="rgba(8,8,10,0.55)">{grid(6.4, 2)}</g>;
+  if (face === "drc")
+    detail = (
+      <>
+        {/* the recessed dish: shaded wall, darker floor */}
+        <circle cx={c} cy={c} r={R * 0.44} fill="rgba(8,8,10,0.2)" />
+        <circle cx={c} cy={c} r={R * 0.26} fill="rgba(8,8,10,0.2)" />
+      </>
+    );
   if (face === "flower") {
     // the same petal rings the 3D face traces, drawn as grooves
     const ring = (k: number) => `M${flowerRingPath(k, R, 10).map(([x, z]) => `${(c + x).toFixed(2)} ${(c + z).toFixed(2)}`).join("L")}Z`;

@@ -170,9 +170,27 @@ export function edgeProfile(edge: EdgeShape, Rv: number, Hf: number, n = PROFILE
 /* ------------------------------------------------------------------ */
 
 /**
- * Every face is flat in geometry: its pattern (Crosscut, Waffle, Flower Power)
- * is traced per pixel in the foam shader from these parameters, so the groove
- * edges stay razor-sharp at any zoom.
+ * DRC Hole, off the owner's product photo: a wide, shallow dish round the
+ * centre hole, about a third of the pad across — a flat floor, then a conical
+ * wall with softened edges up to the face. Radii are fractions of the face
+ * radius; depth a fraction of the foam height.
+ */
+export const DRC = { outer: 0.46, floor: 0.5, depth: 0.25 } as const;
+
+/** How far the face is recessed up into the foam at radius r (mm, ≥ 0). Only DRC Hole has a recess. */
+export function faceRecess(face: FaceShape, r: number, rf: number, Hf: number) {
+  if (face !== "drc") return 0;
+  const ro = DRC.outer * rf;
+  const t = clamp((r - DRC.floor * ro) / (ro - DRC.floor * ro), 0, 1);
+  // a straight cone, its top and bottom edges rounded off
+  const s = lerp(t, t * t * (3 - 2 * t), 0.45);
+  return clamp(DRC.depth * Hf, 1.5, 4.5) * (1 - s);
+}
+
+/**
+ * Face patterns (Crosscut, Waffle, Flower Power) are traced per pixel in the
+ * foam shader from these parameters, so the groove edges stay razor-sharp at
+ * any zoom. Only the big smooth DRC Hole dish is in the geometry (faceRecess).
  *
  * Returns [scale, halfWidth, soft, depth, kind] in mm. kind 0 = square grid
  * (scale = pitch), kind 1 = flower rings (scale = face radius, so the rings
@@ -381,20 +399,22 @@ export function padState(b: PadShape): PadState {
   const rf = profile[0][0];
   const side = revolve(profile, profileNormals(profile));
 
-  // Face: polar grid, ring 0 at the hole, last ring at the face edge. Flat:
-  // every face pattern is traced in the shader (see faceGrooves).
+  // Face: polar grid, ring 0 at the hole, last ring at the face edge. Flat
+  // apart from the DRC dish; patterns are traced in the shader (faceGrooves).
   const face = new Float32Array((FACE_RINGS + 1) * SEG * 3);
   const minY = 0;
   for (let i = 0; i <= FACE_RINGS; i++) {
     const r = lerp(rh, rf, i / FACE_RINGS);
+    const y = faceRecess(b.face, r, rf, Hf);
     for (let j = 0; j < SEG; j++) {
       const k = (i * SEG + j) * 3;
       face[k] = r * cosT[j];
+      face[k + 1] = y;
       face[k + 2] = r * sinT[j];
     }
   }
 
-  const hole = revolve([[rh, 0], [rh, Hf]], [[-1, 0], [-1, 0]]);
+  const hole = revolve([[rh, faceRecess(b.face, rh, rf, Hf)], [rh, Hf]], [[-1, 0], [-1, 0]]);
   const top = revolve([[Rv, Hf], [rh, Hf]], [[0, 1], [0, 1]]);
   const iface = annulus(rh, Rv, Hf, Hf + INTERFACE_T);
   const velcro = annulus(rh, Rv, Hf + INTERFACE_T, T);
