@@ -1,10 +1,10 @@
 import type { Brand, Polish, Stage } from "@/lib/match";
 
 /**
- * Product art for a polish: a bottle per product, silhouette per brand, drawn in
- * Pad King's own look (not the brands' packaging). Combos draw two bottles.
- * When Matt supplies real product photos, set `image` on the polish and this
- * renders the photo instead.
+ * Product art for a polish: the real bottle photos where we have them (see
+ * `photos` in lib/match.ts), otherwise a bottle per product drawn in Pad King's
+ * own look, silhouette per brand. Combos show two bottles, the second tucked
+ * in behind the first.
  */
 
 const STAGE_COLOR: Record<Stage, string> = { cut: "#e2621b", "one-step": "#c99a4a", finish: "#9aa3ad" };
@@ -95,9 +95,23 @@ function Bottle({ brand, lines, stage, uid }: { brand: Brand; lines: string[]; s
 }
 
 export function ProductArt({ polish, className }: { polish: Polish; className?: string }) {
-  if (polish.image) {
-    // eslint-disable-next-line @next/next/no-img-element -- remote stockist/brand images, sizes vary
-    return <img src={polish.image} alt={`${polish.brand} ${polish.name}`} className={className} loading="lazy" />;
+  const photos = polish.photos;
+  if (photos?.length) {
+    return (
+      <span className={`inline-flex items-end ${className ?? ""}`} role="img" aria-label={`${polish.brand} ${polish.name}`}>
+        {photos.map((src, i) => (
+          // eslint-disable-next-line @next/next/no-img-element -- local cut-outs with alpha; sizes vary per bottle
+          <img
+            key={src}
+            src={src}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className={i === 0 ? "relative z-[1] h-full w-auto max-w-none" : "-ml-[18%] h-[94%] w-auto max-w-none opacity-90"}
+          />
+        ))}
+      </span>
+    );
   }
   const two = polish.art.length > 1;
   const stageFor = (i: number) => polish.stages[Math.min(i, polish.stages.length - 1)];

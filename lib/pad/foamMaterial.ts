@@ -203,6 +203,14 @@ const FRAG_NORMAL = /* glsl */ `
 }
 `;
 
+/** The band keeps its own sheen: an orange foam's sheen would tint a black band brown. */
+const FRAG_SHEEN = /* glsl */ `
+#include <lights_physical_fragment>
+#ifdef USE_SHEEN
+material.sheenColor = mix(material.sheenColor, mix(uBandColor, vec3(1.0), 0.15), pkBandM);
+#endif
+`;
+
 export function createSurfaceMaterial(kind: SurfaceKind, params: THREE.MeshPhysicalMaterialParameters) {
   const material = new THREE.MeshPhysicalMaterial(params);
   const uniforms: SurfaceUniforms = {
@@ -229,7 +237,8 @@ export function createSurfaceMaterial(kind: SurfaceKind, params: THREE.MeshPhysi
     shader.fragmentShader = shader.fragmentShader
       .replace("#include <common>", `#include <common>\n${FRAG_HEAD}`)
       .replace("#include <color_fragment>", `#include <color_fragment>\n${FRAG_ALBEDO}`)
-      .replace("#include <normal_fragment_maps>", FRAG_NORMAL);
+      .replace("#include <normal_fragment_maps>", FRAG_NORMAL)
+      .replace("#include <lights_physical_fragment>", FRAG_SHEEN);
   };
   material.customProgramCacheKey = () => `pk-surface-${kind}`;
   return { material, uniforms };

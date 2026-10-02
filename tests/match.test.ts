@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { BRANDS, PICKS, POLISHES, buyHref, picksFor } from "@/lib/match";
 import { PADS } from "@/lib/pads";
 
@@ -52,6 +54,19 @@ describe("pad match data", () => {
     const p = POLISHES.find((x) => x.id === "3d-one")!;
     expect(buyHref(p)).toContain("google.com/search?q=3D%20One");
     expect(buyHref({ ...p, buyUrl: "https://example.com/3d-one" })).toBe("https://example.com/3d-one");
+  });
+});
+
+describe("polish photos", () => {
+  it("every listed bottle photo exists, one per bottle", () => {
+    for (const p of POLISHES) {
+      if (!p.photos) continue;
+      expect(p.photos.length).toBe(p.art.length);
+      for (const src of p.photos) {
+        expect(src).toMatch(/^\/polishes\/[a-z0-9-]+\.webp$/);
+        expect(existsSync(join(process.cwd(), "public", src))).toBe(true);
+      }
+    }
   });
 });
 

@@ -108,6 +108,7 @@ Customer details (name, email, phone) never go into events.
 | Stock pads (names, colours, specs, sizes, buy links) | `lib/pads.ts` |
 | Pad Match data (polishes, Matt's notes, stockist links) | `lib/match.ts` |
 | Pad Match UI | `components/match/` |
+| Polish bottle photos | `public/polishes/<bottle>.webp` (transparent cut-outs, ~600 px tall), listed in each polish's `photos` in `lib/match.ts` |
 | Range showroom | `components/range/` |
 | Reorder tab (coming soon) | `app/orders` |
 | App icons, install banner, offline | `scripts/icons.mjs`, `components/InstallPrompt.tsx`, `public/sw.js`, `app/offline` |

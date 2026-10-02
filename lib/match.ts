@@ -8,8 +8,9 @@
  * Everything else is matched to the pad's job from the four brands and is marked
  * for Matt to confirm. Edit this file only.
  *
- * image:  real product photo path/URL once Matt supplies them; until then the card
- *         draws product art (components/match/ProductArt.tsx).
+ * photos: real bottle photos, one per bottle in the same order as `art`, as
+ *         transparent cut-outs in public/polishes/ (see README). Until a polish
+ *         has them, the card draws product art (components/match/ProductArt.tsx).
  * buyUrl: Matt's preferred stockist / affiliate link; until then a web search.
  */
 
@@ -27,7 +28,8 @@ export interface Polish {
   stages: Stage[];
   /** Manufacturer-published rating, shown as a spec line. */
   spec?: string;
-  image?: string;
+  /** Cut-out bottle photos (public paths), one per entry in `art`. */
+  photos?: string[];
   buyUrl?: string;
 }
 

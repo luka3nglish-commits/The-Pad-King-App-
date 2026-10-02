@@ -42,7 +42,6 @@ export function FaceIcon({ face }: { face: FaceId }) {
     return lines;
   };
   let detail: React.ReactNode = null;
-  if (face === "raised") detail = <circle cx={c} cy={c} r={R * 0.6} fill="#66c04e" />;
   if (face === "crosscut")
     detail = (
       <>
