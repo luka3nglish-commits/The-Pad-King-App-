@@ -19,19 +19,10 @@ async function run(name, viewport, dsf) {
   page.on("console", (m) => m.type() === "error" && errors.push(`[${name}] ${m.text()}`));
   page.on("pageerror", (e) => errors.push(`[${name}] pageerror ${e.message}`));
   await page.goto(base, { waitUntil: "networkidle" });
-  await page.waitForSelector("canvas", { timeout: 20000 });
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(2500);
   await page.screenshot({ path: `${out}/${name}-01-hero.png` });
 
-  const story = await page.evaluate(() => {
-    const s = document.getElementById("story");
-    return { top: s.offsetTop, h: s.offsetHeight - window.innerHeight };
-  });
-  for (const [i, p] of [[2, 0.3], [3, 0.6], [4, 0.95]]) {
-    await page.evaluate((y) => window.scrollTo(0, y), story.top + story.h * p);
-    await page.waitForTimeout(4000);
-    await page.screenshot({ path: `${out}/${name}-0${i}-story-${p}.png` });
-  }
+  // the home timeline has its own pass: tests/e2e/home.mjs
 
   // navigate with the bottom tab bar, like a user would
   await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Build" }).click();

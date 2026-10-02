@@ -1,6 +1,6 @@
 # The Pad King App
 
-The Pad King's customer app: the Spitfire Green story, the custom pad maker, Pad Match and the range in 3D. Installs on phones like a native app. Built for Matt's Magic Detail Tech.
+The Pad King's customer app: the Pad King story (1993 to the Elite Series), the custom pad maker, Pad Match and the range in 3D. Installs on phones like a native app. Built for Matt's Magic Detail Tech.
 
 Spec and decisions: [`docs/specs/2026-10-01-pad-king-app-v1.md`](docs/specs/2026-10-01-pad-king-app-v1.md)
 
@@ -20,12 +20,13 @@ npm test             # geometry (all 360 builds), Pad Match data, build-request 
 npm run build
 ```
 
-Visual pass (screenshots of every story beat and maker state, plus a console-error audit) against a running server:
+Visual pass (screenshots of every timeline chapter and maker state, plus a console-error audit) against a running server:
 
 ```bash
 npm run build && npx next start -p 3100 &
 node tests/e2e/shots.mjs shots http://localhost:3100
 node tests/e2e/match.mjs shots-match http://localhost:3100   # Pad Match states
+node tests/e2e/home.mjs shots-home http://localhost:3100     # home timeline, every chapter
 node tests/e2e/range.mjs shots-range http://localhost:3100   # Range showroom + buy links
 node tests/e2e/pwa.mjs shots-pwa http://localhost:3100 "--stop-cmd=fuser -k 3100/tcp"   # install + offline (stops the server to fake an outage)
 ```
@@ -96,7 +97,9 @@ Customer details (name, email, phone) never go into events.
 | Foam look (cells, grooves shader) | `lib/pad/foamMaterial.ts` |
 | Bottom tabs (order, names, icons) | `components/TabBar.tsx` |
 | Colours, type, motion tokens | `app/globals.css` |
-| Scroll story choreography + copy | `components/hero/` |
+| Home timeline copy (chapters, causes, Gen II points, Elite claims) | `lib/history.ts` |
+| Home timeline layout and animation | `components/history/` |
+| Matt's photos and the Elite logo (cut out, WebP) | `public/history/` |
 | Pad maker UI + request form | `components/maker/` |
 | Stock pads (names, colours, specs, sizes, buy links) | `lib/pads.ts` |
 | Pad Match data (polishes, Matt's notes, stockist links) | `lib/match.ts` |

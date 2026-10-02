@@ -43,7 +43,14 @@ export function FaceIcon({ face }: { face: FaceId }) {
   };
   let detail: React.ReactNode = null;
   if (face === "raised") detail = <circle cx={c} cy={c} r={R * 0.6} fill="#66c04e" />;
-  if (face === "crosscut") detail = <g fill="rgba(8,8,10,0.75)">{grid(4.6, 0.9)}</g>;
+  if (face === "crosscut")
+    detail = (
+      <>
+        {/* small raised squares: lighter tops, fine dark gaps */}
+        <rect x={c - R} y={c - R} width={R * 2} height={R * 2} fill="#5cb444" />
+        <g fill="rgba(8,8,10,0.6)">{grid(2.9, 0.6)}</g>
+      </>
+    );
   if (face === "waffle") detail = <g fill="rgba(8,8,10,0.55)">{grid(6.4, 2)}</g>;
   if (face === "flower") {
     const pts: string[] = [];

@@ -10,6 +10,8 @@ import * as THREE from "three";
  *  2. Face grooves (face material only) — Crosscut/Waffle channels are traced
  *     per pixel with parallax occlusion mapping against an analytic height field,
  *     so the grid edges are perfectly crisp at any zoom and morph smoothly.
+ *  3. Band — an optional coloured stripe around the side between two heights,
+ *     like the interface layer through the middle of a Gen II pad. Off by default.
  *
  * Object space is the pad's own (mm): axis +y, face at y=0 looking down (-y).
  */
@@ -21,6 +23,8 @@ export interface SurfaceUniforms {
   uFaceR: { value: THREE.Vector2 }; // face radius, hole radius (mm)
   uCell: { value: number }; // noise cell size (mm)
   uBump: { value: number }; // micro-normal strength
+  uBand: { value: THREE.Vector4 }; // from y, to y (mm), mix 0–1, edge softness (mm)
+  uBandColor: { value: THREE.Color };
 }
 
 const VERT_HEAD = /* glsl */ `
@@ -46,6 +50,8 @@ uniform vec4 uPat;
 uniform vec2 uFaceR;
 uniform float uCell;
 uniform float uBump;
+uniform vec4 uBand;
+uniform vec3 uBandColor;
 
 float pkHash(vec3 p) {
   p = fract(p * 0.3183099 + 0.1);
@@ -118,6 +124,10 @@ if (uPat.w > 0.001) {
   pkP = vec3(q.x, vPkObj.y + k, q.y);
 }
 #endif
+if (uBand.z > 0.001) {
+  float pkBandM = smoothstep(uBand.x - uBand.w, uBand.x + uBand.w, vPkObj.y) * (1.0 - smoothstep(uBand.y - uBand.w, uBand.y + uBand.w, vPkObj.y));
+  diffuseColor.rgb = mix(diffuseColor.rgb, uBandColor, pkBandM * uBand.z);
+}
 float pkCellTone = pkFbm(pkP / uCell);
 diffuseColor.rgb *= (0.9 + 0.16 * pkCellTone) * mix(1.0, 0.32, pkCav * pkCav);
 `;
@@ -158,6 +168,8 @@ export function createSurfaceMaterial(kind: SurfaceKind, params: THREE.MeshPhysi
     uFaceR: { value: new THREE.Vector2(30, 4) },
     uCell: { value: kind === "fabric" ? 0.3 : 0.5 },
     uBump: { value: kind === "fabric" ? 0.7 : 0.3 },
+    uBand: { value: new THREE.Vector4(0, 0, 0, 0.35) },
+    uBandColor: { value: new THREE.Color("#000000") },
   };
   if (kind === "face") material.defines = { ...material.defines, PK_FACE: "" };
 

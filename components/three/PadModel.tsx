@@ -24,6 +24,17 @@ export interface PadModelProps {
   explodeScale?: number;
   /** Foam colour; changes blend smoothly. Defaults to Spitfire Green. */
   color?: string;
+  /**
+   * A stripe around the side, as fractions of the foam height measured from the
+   * face (0) to the back (1) — e.g. a Gen II pad's interface layer. `bandRef`
+   * (0–1) fades it in and out without re-rendering.
+   */
+  band?: { from: number; to: number; color: string };
+  bandRef?: MutableRefObject<number>;
+  /** 0–1: heats the glue line (and warms the velcro) with an orange glow. */
+  glowRef?: MutableRefObject<number>;
+  /** Colour of the thin layer between foam and velcro. Defaults to a dark interface grey. */
+  interfaceColor?: string;
 }
 
 const _v = new THREE.Vector3();
@@ -32,7 +43,19 @@ const _right = new THREE.Vector3();
 
 const WHITE = new THREE.Color("#ffffff");
 
-export function PadModel({ build, explodeRef, markerEls, explodeScale = 1, color = FOAM.color }: PadModelProps) {
+const GLOW = new THREE.Color("#e2621b");
+
+export function PadModel({
+  build,
+  explodeRef,
+  markerEls,
+  explodeScale = 1,
+  color = FOAM.color,
+  band,
+  bandRef,
+  glowRef,
+  interfaceColor = "#3c4048",
+}: PadModelProps) {
   const targetColor = useMemo(() => new THREE.Color(color), [color]);
   const anchors = useRef<(THREE.Object3D | null)[]>([]);
   const set = useMemo(() => new PadGeometrySet(padState(build)), []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -63,7 +86,7 @@ export function PadModel({ build, explodeRef, markerEls, explodeScale = 1, color
     };
     const face = createSurfaceMaterial("face", foamParams);
     const foam = createSurfaceMaterial("foam", foamParams);
-    const iface = createSurfaceMaterial("foam", { color: "#3c4048", roughness: 0.62, metalness: 0 });
+    const iface = createSurfaceMaterial("foam", { color: interfaceColor, roughness: 0.62, metalness: 0 });
     iface.uniforms.uBump.value = 0.2;
     const velcro = createSurfaceMaterial("fabric", {
       color: "#545a66",
@@ -99,6 +122,19 @@ export function PadModel({ build, explodeRef, markerEls, explodeScale = 1, color
     const u = materials.face.uniforms;
     u.uPat.value.set(set.pat[0], set.pat[1], set.pat[2], set.pat[3]);
     u.uFaceR.value.set(set.faceR[0], set.faceR[1]);
+    if (band) {
+      const hf = dimsOf(build).Hf;
+      const mix = bandRef ? bandRef.current : 1;
+      for (const m of [materials.foam, materials.face]) {
+        m.uniforms.uBand.value.set(band.from * hf, band.to * hf, mix, 0.35);
+        m.uniforms.uBandColor.value.set(band.color);
+      }
+    }
+    if (glowRef) {
+      // the glue line between foam and velcro runs hot; the velcro only warms
+      materials.iface.material.emissive.copy(GLOW).multiplyScalar(glowRef.current * 2.4);
+      materials.velcro.material.emissive.copy(GLOW).multiplyScalar(glowRef.current * 0.12);
+    }
     const target = explodeRef?.current ?? 0;
     explodeEased.current = THREE.MathUtils.damp(explodeEased.current, target, 8, dt);
     const e = explodeEased.current;
