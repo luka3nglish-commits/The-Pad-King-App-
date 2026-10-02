@@ -1,6 +1,14 @@
+import { PADS } from "@/lib/pads";
+
 export function SiteFooter() {
   return (
     <footer className="relative z-10 border-t border-line bg-bg/80 backdrop-blur-xl">
+      {/* the range as a hairline across the top */}
+      <div className="flex h-[2px]" aria-hidden>
+        {PADS.map((p) => (
+          <span key={p.id} className="flex-1" style={{ background: p.color }} />
+        ))}
+      </div>
       <div className="mx-auto flex max-w-[1280px] flex-col gap-6 px-4 py-10 sm:px-8 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="pk-gold-text font-display text-2xl font-black uppercase [font-stretch:125%]">The Pad King</p>

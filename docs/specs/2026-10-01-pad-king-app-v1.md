@@ -14,7 +14,7 @@ Premium, technical, animation-heavy: "Apple product pages on steroids, a touch o
 | Platform | Web app, installable to home screen. No app stores in v1 |
 | Deal | Favour / portfolio piece |
 | Theme | Dark only |
-| Colours | Black + gold, a touch of orange, tonal tiger-stripe background |
+| Colours | Black + gold; orange only for heat and "live". Studio-black backdrop (tiger stripes dropped 2026-10-02, owner: "doesn't really make sense" now the app is about Matt's own story) |
 | Live interactiveness | Simulators + live 3D |
 | Feel | Apple product pages (scroll-driven 3D, product as hero) + Porsche precision |
 | Store | WooCommerce (existing thepadking.com.au) |
@@ -101,7 +101,6 @@ Matt's direction: the home page becomes a timeline of how his pads were created,
 | Token | Value | Use |
 |---|---|---|
 | `--pk-bg` | `#08080A` | canvas |
-| `--pk-stripe` | `#121216` | tiger stripes at rest |
 | `--pk-surface` / `-2` | `#111114` / `#18181D` | panels, inputs |
 | `--pk-text` / `-2` | `#F5F2EA` / `#A8A49A` | primary / secondary text |
 | `--pk-muted` | `#6B675F` | labels/large text only (~3.6:1) |
@@ -113,7 +112,9 @@ Matt's direction: the home page becomes a timeline of how his pads were created,
 
 ### Signature moves
 
-- **Tonal tiger stripes** — generated SVG (no asset), black-on-black at rest; a gold → orange light band sweeps beneath them with scroll + slow drift and lights them up; on desktop a torch follows the cursor. Transform-only, static under reduced motion.
+- **Studio backdrop** — product-studio black: a soft gold key light glides side to side with scroll (and drifts slowly on its own), a warm floor bounce, faint foam-cell grain, and on desktop a dim light follows the pointer. Gold type catches the same light. The products supply the colour. Transform-only, static under reduced motion.
+- **Range bands** — the five pad colours as a row of short bands (after the stacked pads in Matt's logo and the Gen II stripe). Used sparingly: hero eyebrow, footer hairline, share card.
+- **Scroll timing rule** — every scrubbed animation is fully played by the time its visual is centred on screen (`inView()` in `components/history/useScrollFx.ts`); `tests/e2e/timing.mjs` checks it.
 - **One light source** — gold type picks up the same sweep position.
 - **Parametric 3D pad** — every build generated live (no model files); option changes are true per-vertex morphs.
 - **Shader foam** — open-cell micro-normals; Crosscut/Waffle grooves traced per pixel (parallax occlusion) so grid edges stay razor-sharp.

@@ -4,7 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { GEN2_POINTS, PHOTOS } from "@/lib/history";
 import { HistImg } from "./HistImg";
-import { useScrollFx } from "./useScrollFx";
+import { SCRUB, useScrollFx } from "./useScrollFx";
 
 const REFLECT = "[-webkit-box-reflect:below_2px_linear-gradient(transparent_64%,rgba(255,255,255,0.14))]";
 
@@ -13,10 +13,10 @@ export function Gen2Gallery() {
   const ref = useRef<HTMLElement>(null);
   useScrollFx(ref, (reduced) => {
     if (reduced) return;
-    gsap.fromTo("[data-stack]", { scale: 0.9, y: 40 }, { scale: 1, y: 0, ease: "none", scrollTrigger: { trigger: "[data-stack]", start: "top bottom", end: "center 55%", scrub: 0.6 } });
+    gsap.fromTo("[data-stack]", { scale: 0.9, y: 40 }, { scale: 1, y: 0, ease: "none", scrollTrigger: { trigger: "[data-stack]", start: "top bottom", end: "center 62%", scrub: SCRUB } });
     gsap.utils.toArray<HTMLElement>("[data-slide]").forEach((el) => {
       const from = Number(el.dataset.slide);
-      gsap.fromTo(el, { x: from, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power2.out", scrollTrigger: { trigger: el, start: "top 92%", end: "top 55%", scrub: 0.6 } });
+      gsap.fromTo(el, { x: from, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power2.out", scrollTrigger: { trigger: el, start: "top 96%", end: "top 70%", scrub: SCRUB } });
     });
   });
 

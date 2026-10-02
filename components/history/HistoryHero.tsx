@@ -1,5 +1,6 @@
 "use client";
 
+import { RangeBands } from "@/components/RangeBands";
 import { CHAPTERS } from "@/lib/history";
 import { jumpTo } from "./useScrollFx";
 
@@ -16,7 +17,7 @@ export function HistoryHero() {
       />
       <div className="relative mx-auto flex w-full max-w-[1280px] flex-1 flex-col justify-center px-4 pb-10 pt-6 sm:px-8 xl:pl-28">
         <p className="pk-eyebrow pk-rise mb-6 flex items-center gap-2.5">
-          <span className="pk-live" aria-hidden /> The Pad King story
+          <RangeBands /> The Pad King story
         </p>
         <h1 id="hero-title" className="pk-display text-[clamp(44px,7.4vw,112px)]">
           <span className="pk-rise block" style={{ animationDelay: "90ms" }}>

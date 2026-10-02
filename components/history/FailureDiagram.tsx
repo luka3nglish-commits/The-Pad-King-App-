@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
-import { useScrollFx } from "./useScrollFx";
+import { inView, useScrollFx } from "./useScrollFx";
 
 // x position, start y, depth travelled (viewBox units)
 const DROPS: [number, number, number][] = [
@@ -20,7 +20,7 @@ export function FailureDiagram() {
   useScrollFx(ref, (reduced) => {
     const tl = gsap.timeline({
       defaults: { ease: "none" },
-      scrollTrigger: reduced ? undefined : { trigger: ref.current, start: "top 80%", end: "bottom 35%", scrub: 0.6 },
+      scrollTrigger: reduced ? undefined : inView(ref.current),
     });
     tl.fromTo("[data-drop]", { y: 0, autoAlpha: 0 }, { y: (_i: number, el: Element) => Number((el as HTMLElement).dataset.depth), autoAlpha: 1, duration: 0.45, stagger: 0.025, ease: "power1.in" }, 0)
       .fromTo("[data-label=solvent]", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.1 }, 0.05)
