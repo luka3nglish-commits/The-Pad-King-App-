@@ -94,6 +94,17 @@ Matt's direction: the home page becomes a timeline of how his pads were created,
 - Photos: Matt's Gen II shots, cut out for the dark page. **Every pad with a stripe through the middle is a Gen II** (owner). The plain red disc photo is not used until Matt says what it is.
 - **Elite Series logo:** only in the Gen III chapter for now (owner); the app header/icon keep the current wordmark.
 
+### 3D realism from the real pad (2026-10-02)
+
+Luka photographed a real Spitfire Green (face, sides, back). From those photos:
+
+- **Stock edge** (`edge: "stock"`, used for every shop pad, not a maker option): the face is about the velcro's width, the rim rolls out past it with a soft radius (0.3 × foam height), then a straight side tapers back in to the velcro. Matches Matt's own velcro/face sizing (e.g. 75/90).
+- **Foam colour**: the pad itself renders in its real lime — 3D albedo `#6FE271`, calibrated so the render matches the photo (face ≈ `#72E94F`) under the studio light. UI accents (swatch glows, range bands) stay the deeper `#3FA02C` per the earlier "rich, not fluro" direction; pad-picker chips use the real colour so they match the product.
+- **Foam grain**: open-cell grain sized to the close-ups (visible pores, not a smooth skin).
+- **Velcro**: neutral dark grey, with the real back print (Pad King shield, "PAD KING", "SPITFIRE GREEN ALL ROUNDER") lifted from the back photo into a mask texture (`public/textures/spitfire-back-print.png`).
+- Stock pads show no dark interface band (the real Spitfire has none visible); the pad maker keeps its labelled interface layer for the exploded view.
+- **Still to confirm**: exact face/velcro diameters and thickness (calipers), and photos of the other four pads to calibrate their colours the same way.
+
 ## Design system (built)
 
 ### Colour tokens — `app/globals.css`

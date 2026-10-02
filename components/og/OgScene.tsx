@@ -32,7 +32,7 @@ export default function OgScene() {
           <group key={p.id} position={[i * 0.5, i * 0.03, -i * 0.4]} rotation={[0.06, 0.6, 0]}>
             <group rotation={[-Math.PI / 2, 0, 0]}>
               <group position={[0, -p.shape.thickness * 0.01, 0]}>
-                <PadModel build={stockShape(p.shape.thickness)} color={p.color} />
+                <PadModel build={stockShape(p.shape.thickness)} color={p.foam ?? p.color} interfaceColor={p.foam ?? p.color} backPrint={p.print} />
               </group>
             </group>
           </group>

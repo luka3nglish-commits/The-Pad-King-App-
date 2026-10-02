@@ -24,7 +24,7 @@ function frame(layout: Layout, w: number, h: number) {
   return wide ? { z: 5.5, x: 0, y: -0.44 } : { z: 5.8, x: 0, y: -0.28 };
 }
 
-function Rig({ shape, color, layout }: { shape: PadShape; color: string; layout: Layout }) {
+function Rig({ shape, color, layout, print }: { shape: PadShape; color: string; layout: Layout; print?: "spitfire" }) {
   const spin = useRef<THREE.Group>(null);
   const centre = useRef<THREE.Group>(null);
   const place = useRef<THREE.Group>(null);
@@ -46,7 +46,7 @@ function Rig({ shape, color, layout }: { shape: PadShape; color: string; layout:
         <group rotation={[-Math.PI / 2 + 0.15, 0, 0]}>
           <group ref={spin}>
             <group ref={centre}>
-              <PadModel build={shape} color={color} />
+              <PadModel build={shape} color={color} interfaceColor={color} backPrint={print} />
             </group>
           </group>
         </group>
@@ -55,15 +55,27 @@ function Rig({ shape, color, layout }: { shape: PadShape; color: string; layout:
   );
 }
 
-export default function PadStage({ shape, color, label, layout = "card" }: { shape: PadShape; color: string; label: string; layout?: Layout }) {
+export default function PadStage({
+  shape,
+  color,
+  label,
+  layout = "card",
+  print,
+}: {
+  shape: PadShape;
+  color: string;
+  label: string;
+  layout?: Layout;
+  print?: "spitfire";
+}) {
   return (
     <PadCanvas className="absolute inset-0 cursor-grab active:cursor-grabbing" camera={{ z: 5, fov: 30 }} label={label}>
-      <Rig shape={shape} color={color} layout={layout} />
+      <Rig shape={shape} color={color} layout={layout} print={print} />
     </PadCanvas>
   );
 }
 
-/** Stock pad shape for a catalogue entry. */
+/** Stock pad shape for a catalogue entry: the shop pads' own edge, plain face. */
 export function stockShape(thickness: number): PadShape {
-  return { size: 75, thickness, edge: "rounded", face: "flat" };
+  return { size: 75, thickness, edge: "stock", face: "flat" };
 }

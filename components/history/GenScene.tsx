@@ -8,7 +8,7 @@ import { PadModel } from "@/components/three/PadModel";
 import type { PadShape } from "@/lib/pad/geometry";
 import { FOAM } from "@/lib/pad/options";
 
-const PAD: PadShape = { size: 75, thickness: 20, edge: "rounded", face: "flat" };
+const PAD: PadShape = { size: 75, thickness: 20, edge: "stock", face: "flat" };
 /** Gen II's interface stripe, placed from Matt's side-on photo (fractions of foam height, face → back). */
 const GEN2_STRIPE = { from: 0.44, to: 0.72, color: "#d8be1c" };
 const FACE_ON = -Math.PI / 2;
@@ -82,7 +82,7 @@ function Rig({ progressRef }: { progressRef: MutableRefObject<number> }) {
     <group ref={group}>
       <group ref={spin}>
         <group position={[0, -PAD.thickness * 0.01, 0]}>
-          <PadModel build={PAD} color={FOAM.color} interfaceColor={FOAM.color} band={GEN2_STRIPE} bandRef={bandRef} glowRef={glowRef} />
+          <PadModel build={PAD} color={FOAM.foam} interfaceColor={FOAM.foam} band={GEN2_STRIPE} bandRef={bandRef} glowRef={glowRef} backPrint="spitfire" />
         </group>
       </group>
     </group>

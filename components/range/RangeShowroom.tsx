@@ -60,7 +60,7 @@ export function RangeShowroom() {
           style={{ background: `radial-gradient(55% 70% at 70% 55%, ${pad.color}26, transparent 70%)` }}
           aria-hidden
         />
-        <PadStage shape={stockShape(pad.shape.thickness)} color={pad.color} layout="showroom" label={`${pad.name} in 3D. Drag to rotate.`} />
+        <PadStage shape={stockShape(pad.shape.thickness)} color={pad.foam ?? pad.color} print={pad.print} layout="showroom" label={`${pad.name} in 3D. Drag to rotate.`} />
 
         <div className="pointer-events-none absolute inset-x-0 top-0 p-5 md:inset-y-0 md:right-auto md:flex md:w-[48%] md:flex-col md:justify-center md:p-10">
           <p className="pk-mono text-[11px] uppercase tracking-[0.2em] text-muted">
@@ -97,7 +97,8 @@ export function RangeShowroom() {
               <input type="radio" name={name} className="sr-only" checked={p.id === padId} onChange={() => choose(p.id)} />
               <span
                 className="size-9 shrink-0 rounded-full shadow-[inset_0_-4px_8px_rgba(0,0,0,0.25),0_0_0_1px_rgba(245,242,234,0.12)] md:size-8"
-                style={{ background: `radial-gradient(circle at 35% 30%, ${p.color}, ${p.color}cc 60%, ${p.color}88)` }}
+                // product chip: the pad's real foam colour, matching the 3D render
+                style={{ background: `radial-gradient(circle at 35% 30%, ${p.foam ?? p.color}, ${p.foam ?? p.color}cc 60%, ${p.foam ?? p.color}88)` }}
                 aria-hidden
               />
               <span className="text-center text-[11px] font-semibold leading-tight sm:text-[12px] md:text-left md:text-[13px]">

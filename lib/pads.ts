@@ -7,6 +7,8 @@
  * buyUrl: the pad's product page on Matt's store (links confirmed by the owner).
  */
 
+import { FOAM } from "@/lib/pad/options";
+
 export const SITE = "https://thepadking.com.au";
 export const PAD_RANGE_URL = `${SITE}/pad-range/`;
 
@@ -21,8 +23,12 @@ export interface Pad {
   short: string;
   role: string;
   blurb: string;
-  /** Foam colour, deep and rich rather than fluro (owner direction). */
+  /** UI colour (swatches, glows), deep and rich rather than fluro (owner direction). */
   color: string;
+  /** 3D foam colour when calibrated against photos of the real pad; falls back to `color`. */
+  foam?: string;
+  /** Logo print on the velcro back, where photographed. */
+  print?: "spitfire";
   /** Stock shape for the 3D render (mm). */
   shape: { thickness: number };
   tip?: string;
@@ -97,6 +103,8 @@ export const PADS: Pad[] = [
     role: "All rounder",
     blurb: "Balanced light to medium cut. Corrects, polishes and finishes in one pad.",
     color: "#3fa02c",
+    foam: FOAM.foam,
+    print: "spitfire",
     shape: { thickness: 20 },
     sizes: ['3"', '5"', '6"'],
     specs: [

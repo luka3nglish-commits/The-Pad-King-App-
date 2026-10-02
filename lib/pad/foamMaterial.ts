@@ -12,6 +12,8 @@ import * as THREE from "three";
  *     so the grid edges are perfectly crisp at any zoom and morph smoothly.
  *  3. Band — an optional coloured stripe around the side between two heights,
  *     like the interface layer through the middle of a Gen II pad. Off by default.
+ *  4. Print (fabric only) — the logo printed on the velcro back, from a mask
+ *     texture mapped flat across the back face. Off by default.
  *
  * Object space is the pad's own (mm): axis +y, face at y=0 looking down (-y).
  */
@@ -25,6 +27,9 @@ export interface SurfaceUniforms {
   uBump: { value: number }; // micro-normal strength
   uBand: { value: THREE.Vector4 }; // from y, to y (mm), mix 0–1, edge softness (mm)
   uBandColor: { value: THREE.Color };
+  uPrint: { value: THREE.Texture | null }; // fabric: print mask (red channel)
+  uPrintParams: { value: THREE.Vector4 }; // on 0–1, back face y (mm), velcro radius (mm), unused
+  uPrintColor: { value: THREE.Color };
 }
 
 const VERT_HEAD = /* glsl */ `
@@ -52,6 +57,11 @@ uniform float uCell;
 uniform float uBump;
 uniform vec4 uBand;
 uniform vec3 uBandColor;
+#ifdef PK_FABRIC
+uniform sampler2D uPrint;
+uniform vec4 uPrintParams;
+uniform vec3 uPrintColor;
+#endif
 
 float pkHash(vec3 p) {
   p = fract(p * 0.3183099 + 0.1);
@@ -128,6 +138,14 @@ if (uBand.z > 0.001) {
   float pkBandM = smoothstep(uBand.x - uBand.w, uBand.x + uBand.w, vPkObj.y) * (1.0 - smoothstep(uBand.y - uBand.w, uBand.y + uBand.w, vPkObj.y));
   diffuseColor.rgb = mix(diffuseColor.rgb, uBandColor, pkBandM * uBand.z);
 }
+#ifdef PK_FABRIC
+// the print sits on the back face only (the flat top of the velcro)
+if (uPrintParams.x > 0.001 && vPkObj.y > uPrintParams.y - 0.05) {
+  vec2 puv = vec2(vPkObj.x, -vPkObj.z) / (2.0 * uPrintParams.z) + 0.5;
+  float pm = texture2D(uPrint, puv).r;
+  diffuseColor.rgb = mix(diffuseColor.rgb, uPrintColor, pm * uPrintParams.x);
+}
+#endif
 float pkCellTone = pkFbm(pkP / uCell);
 diffuseColor.rgb *= (0.9 + 0.16 * pkCellTone) * mix(1.0, 0.32, pkCav * pkCav);
 `;
@@ -170,8 +188,12 @@ export function createSurfaceMaterial(kind: SurfaceKind, params: THREE.MeshPhysi
     uBump: { value: kind === "fabric" ? 0.7 : 0.3 },
     uBand: { value: new THREE.Vector4(0, 0, 0, 0.35) },
     uBandColor: { value: new THREE.Color("#000000") },
+    uPrint: { value: null },
+    uPrintParams: { value: new THREE.Vector4(0, 0, 1, 0) },
+    uPrintColor: { value: new THREE.Color("#a3abb8") },
   };
   if (kind === "face") material.defines = { ...material.defines, PK_FACE: "" };
+  if (kind === "fabric") material.defines = { ...material.defines, PK_FABRIC: "" };
 
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);

@@ -35,7 +35,14 @@ export interface PadModelProps {
   glowRef?: MutableRefObject<number>;
   /** Colour of the thin layer between foam and velcro. Defaults to a dark interface grey. */
   interfaceColor?: string;
+  /** The logo printed on the velcro back (only Spitfire's is photographed so far). */
+  backPrint?: "spitfire";
 }
+
+/** Print masks lifted from Luka's photos of the real pads (public/textures). */
+const PRINTS = { spitfire: "/textures/spitfire-back-print.png" } as const;
+/** Velcro loop as photographed on the Spitfire: a neutral dark grey (the studio light is warm). */
+const VELCRO = "#4e5056";
 
 const _v = new THREE.Vector3();
 const _s = new THREE.Vector3();
@@ -50,11 +57,12 @@ export function PadModel({
   explodeRef,
   markerEls,
   explodeScale = 1,
-  color = FOAM.color,
+  color = FOAM.foam,
   band,
   bandRef,
   glowRef,
   interfaceColor = "#3c4048",
+  backPrint,
 }: PadModelProps) {
   const targetColor = useMemo(() => new THREE.Color(color), [color]);
   const anchors = useRef<(THREE.Object3D | null)[]>([]);
@@ -86,21 +94,32 @@ export function PadModel({
     };
     const face = createSurfaceMaterial("face", foamParams);
     const foam = createSurfaceMaterial("foam", foamParams);
+    // open-cell grain sized to what Luka's close-ups show: visible pores, not a smooth skin
+    face.uniforms.uCell.value = 0.55;
+    face.uniforms.uBump.value = 0.36;
+    foam.uniforms.uCell.value = 0.85;
+    foam.uniforms.uBump.value = 0.5;
     const iface = createSurfaceMaterial("foam", { color: interfaceColor, roughness: 0.62, metalness: 0 });
     iface.uniforms.uBump.value = 0.2;
     const velcro = createSurfaceMaterial("fabric", {
-      color: "#545a66",
+      color: VELCRO,
       roughness: 1,
       sheen: 1,
       sheenRoughness: 0.8,
-      sheenColor: new THREE.Color("#8a8a98"),
+      sheenColor: new THREE.Color("#8e9198"),
     });
-    return { face, foam, iface, velcro };
+    // one print texture for the session; whether it shows is a per-frame uniform
+    const tex = new THREE.TextureLoader().load(PRINTS.spitfire);
+    tex.colorSpace = THREE.NoColorSpace;
+    tex.anisotropy = 4;
+    velcro.uniforms.uPrint.value = tex;
+    return { face, foam, iface, velcro, tex };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- colour changes are blended in useFrame
 
   useEffect(
     () => () => {
-      for (const m of Object.values(materials)) m.material.dispose();
+      for (const m of [materials.face, materials.foam, materials.iface, materials.velcro]) m.material.dispose();
+      materials.tex.dispose();
     },
     [materials],
   );
@@ -130,6 +149,8 @@ export function PadModel({
         m.uniforms.uBandColor.value.set(band.color);
       }
     }
+    const dd = dimsOf(build);
+    materials.velcro.uniforms.uPrintParams.value.set(backPrint ? 1 : 0, dd.T, dd.Rv, 0);
     if (glowRef) {
       // the glue line between foam and velcro runs hot; the velcro only warms
       materials.iface.material.emissive.copy(GLOW).multiplyScalar(glowRef.current * 2.4);
