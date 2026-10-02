@@ -38,7 +38,7 @@ Customer builds a pad; the 3D model morphs live with every choice; the build is 
 | Size | 40, 65, 75 mm | **Velcro diameter** — the face that sits on the backing plate. Custom-only sizes (stock Spitfire is 3"/5"/6") |
 | Thickness | 12, 15, 16, 18, 20, 22 mm | Total height, velcro to face |
 | Edge | Rounded, Full Tilt, Trapeze, Cone, **Splay** | "Rupes-style" renamed **Splay**: splayed side flaring past the velcro with a bevelled lower lip (Rupes BigFoot description). **Full Tilt shape unknown** — modelled as a deep bevel, provisional |
-| Face | Raised, Crosscut, Waffle, Flower Power | Raised = centre boss. Crosscut = deep square-grid cuts like the Scholl Spider. Waffle = shallow square channels. Flower Power = raised flower-shaped face, **still in testing** (badged "In testing") |
+| Face | Raised, Crosscut, Waffle, Flower Power | Raised = centre boss. Crosscut = **raised crosscut** (Matt, 2026-10-02): a fine grid of much smaller squares standing slightly proud of the face, like the Scholl Spider. Shown as "Raised Crosscut"; build code stays XCT. Waffle = shallow square channels. Flower Power = raised flower-shaped face, **still in testing** (badged "In testing") |
 
 All 4 × 5 × 6 × 3 = **360 combinations can be made** (owner-confirmed).
 
@@ -182,4 +182,4 @@ Tabs are one array in `components/TabBar.tsx`.
 | 13 | Gen I and Gen II launch years, and confirm the Gen I description (no interface layer) | Timeline accuracy |
 | 14 | What the plain red disc with black backing is | Using that photo |
 | 15 | Transparent / vector Elite Series logo (current one is cut out from a PNG) | Sharper Elite chapter |
-| 16 | Crosscut is a **raised** crosscut: much smaller squares standing slightly proud of the face (owner, 2026-10-02) | Pad maker accuracy |
+| 16 | Raised crosscut: exact square size and height (built as ~3.6 mm squares, ~1 mm proud) | Pad maker accuracy |

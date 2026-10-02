@@ -113,9 +113,11 @@ describe("pad geometry", () => {
     const xc = padState({ size: 75, thickness: 20, edge: "rounded", face: "crosscut" });
     const raised = padState({ size: 75, thickness: 20, edge: "rounded", face: "raised" });
     const maxY = (a: Float32Array) => a.reduce((m, v, i) => (i % 3 === 1 ? Math.max(m, v) : m), -Infinity);
-    // crosscut face geometry stays flat; the shader gets a deep groove pattern instead
+    // raised crosscut: geometry stays flat; the shader traces small squares standing just proud
     expect(maxY(xc.face.pos)).toBeCloseTo(0);
-    expect(xc.pat[3]).toBeGreaterThan(5);
+    expect(xc.pat[0]).toBeLessThan(5); // small squares
+    expect(xc.pat[3]).toBeGreaterThan(0.5);
+    expect(xc.pat[3]).toBeLessThan(2); // only slightly raised
     const [rf, rh] = xc.faceR;
     const s = xc.pat[0];
     expect(grooveDepth(xc.pat, s * 2, s * 0.5, rf, rh)).toBeCloseTo(xc.pat[3], 1); // on a slit

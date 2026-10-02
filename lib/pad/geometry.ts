@@ -161,8 +161,8 @@ export type GroovePattern = [number, number, number, number];
 
 export function faceGrooves(face: FaceShape, D: number, Hf: number): GroovePattern {
   switch (face) {
-    case "crosscut": // deep, narrow square-grid cuts (Scholl Spider style)
-      return [D / 8.5, 0.55, 0.12, 0.38 * Hf];
+    case "crosscut": // raised crosscut (Matt): small squares, ~3.6 mm, standing ~1 mm proud of the face
+      return [3.6, 0.38, 0.1, 1.1];
     case "waffle": {
       // wider, shallow channels
       const s = D / 6.5;

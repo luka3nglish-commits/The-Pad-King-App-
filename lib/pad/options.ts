@@ -34,7 +34,7 @@ export const EDGES = [
 
 export const FACES = [
   { id: "raised", name: "Raised", code: "RSD", blurb: "Raised centre boss puts the pressure where you need it." },
-  { id: "crosscut", name: "Crosscut", code: "XCT", blurb: "Deep square-grid cuts. Each block flexes on its own and runs cooler." },
+  { id: "crosscut", name: "Raised Crosscut", code: "XCT", blurb: "A fine grid of small squares standing just proud of the face." },
   { id: "waffle", name: "Waffle", code: "WFL", blurb: "Shallow square channels hold polish and spread it evenly." },
   { id: "flower", name: "Flower Power", code: "FLW", blurb: "Raised flower-shaped face. In testing.", provisional: true },
 ] as const;
