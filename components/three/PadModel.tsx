@@ -174,7 +174,7 @@ export function PadModel({
       vm.sheenColor.copy(vm.color).lerp(WHITE, VELCRO_SHEEN);
     }
     const u = materials.face.uniforms;
-    u.uPat.value.set(set.pat[0], set.pat[1], set.pat[2], set.pat[3]);
+    materials.face.setPattern(set.pat);
     u.uFaceR.value.set(set.faceR[0], set.faceR[1]);
     if (band) lastBand.current = band;
     bandMix.current = band && bandRef ? bandRef.current : THREE.MathUtils.damp(bandMix.current, band ? 1 : 0, 7, dt);

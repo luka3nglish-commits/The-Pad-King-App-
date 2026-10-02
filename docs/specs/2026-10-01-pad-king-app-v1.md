@@ -38,9 +38,9 @@ Customer builds a pad; the 3D model morphs live with every choice; the build is 
 | Size | 40, 65, 75 mm | **Velcro diameter** — the face that sits on the backing plate. Custom-only sizes (stock Spitfire is 3"/5"/6") |
 | Thickness | 12, 15, 16, 18, 20, 22 mm | Total height, velcro to face |
 | Edge | Rounded, Full Tilt, Trapeze, Cone, **Splay** | "Rupes-style" renamed **Splay**: splayed side flaring past the velcro with a bevelled lower lip (Rupes BigFoot description). **Full Tilt shape unknown** — modelled as a deep bevel, provisional |
-| Face | Flat, Crosscut, Waffle, Flower Power | Flat = the standard flat face; it replaced the Raised centre-boss face (owner, 2026-10-02). Crosscut = **raised crosscut** (Matt, 2026-10-02): a fine grid of much smaller squares standing slightly proud of the face, like the Scholl Spider. Shown as "Raised Crosscut"; build code stays XCT. Waffle = shallow square channels. Flower Power = raised flower-shaped face, **still in testing** (badged "In testing") |
+| Face | Flat, Crosscut, Waffle, DRC Hole, Flower Power | DRC Hole (owner, 2026-10-02, from a product photo) = a wide, shallow dish recessed round the centre hole, about a third of the pad across: a flat floor, then a conical wall up to the face (build code DRC; size and depth are estimates from the photo). Flat = the standard flat face; it replaced the Raised centre-boss face (owner, 2026-10-02). Crosscut = **raised crosscut** (Matt, 2026-10-02): a fine grid of much smaller squares standing slightly proud of the face, like the Scholl Spider. Shown as "Raised Crosscut"; build code stays XCT. Waffle = shallow square channels. Flower Power = rings of flower-petal grooves, from Luka's photo of the real pad (2026-10-02): a 10-petal flower round the hole, then rings of same-size petals out to the rim (15, 20, 26), the grooves running round each petal's outer arc. Scales with the face radius. **Still in testing** (badged "In testing") |
 
-All 4 × 5 × 6 × 3 = **360 combinations can be made** (owner-confirmed).
+All 5 × 5 × 6 × 3 = **450 combinations can be made** (360 owner-confirmed, plus the DRC Hole face the owner added).
 
 Every option lives in `lib/pad/options.ts`; every shape lives in `lib/pad/geometry.ts`. Real dimensions from Matt = edit numbers there, nothing else.
 
@@ -197,7 +197,7 @@ Tabs are one array in `components/TabBar.tsx`.
 |---|---|---|
 | 1 | Vector logo (SVG/AI/PDF) | Header/footer polish |
 | 2 | Full Tilt edge — real shape | Pad accuracy (later) |
-| 3 | Flower Power — final shape once testing is done | Pad accuracy (later) |
+| 3 | Flower Power — confirm the shape once testing is done (modelled from one photo: petal size, groove width and depth are estimates) | Pad accuracy (later) |
 | 4 | Real dimensions for each edge/face profile | Pad accuracy (later) |
 | 5 | Matt's inbox for build requests + a Resend account (or other email provider) | Going live with requests |
 | 6 | Pad specs (density, cut, speed range, lifespan) + compound list | Phase 3, reminders |

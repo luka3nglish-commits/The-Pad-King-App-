@@ -1,4 +1,4 @@
-import { INTERFACE_T, VELCRO_T, rawEdgeProfile } from "@/lib/pad/geometry";
+import { FLOWER, INTERFACE_T, VELCRO_T, flowerRingPath, rawEdgeProfile } from "@/lib/pad/geometry";
 import type { EdgeId, FaceId } from "@/lib/pad/options";
 
 /**
@@ -51,14 +51,24 @@ export function FaceIcon({ face }: { face: FaceId }) {
       </>
     );
   if (face === "waffle") detail = <g fill="rgba(8,8,10,0.55)">{grid(6.4, 2)}</g>;
+  if (face === "drc")
+    detail = (
+      <>
+        {/* the recessed dish: shaded wall, darker floor */}
+        <circle cx={c} cy={c} r={R * 0.44} fill="rgba(8,8,10,0.2)" />
+        <circle cx={c} cy={c} r={R * 0.26} fill="rgba(8,8,10,0.2)" />
+      </>
+    );
   if (face === "flower") {
-    const pts: string[] = [];
-    for (let i = 0; i <= 120; i++) {
-      const th = (i / 120) * Math.PI * 2;
-      const rb = R * 0.68 * (0.72 + 0.28 * Math.pow(Math.abs(Math.cos(3 * th)), 0.7));
-      pts.push(`${(c + rb * Math.cos(th)).toFixed(2)} ${(c + rb * Math.sin(th)).toFixed(2)}`);
-    }
-    detail = <path d={`M${pts.join("L")}Z`} fill="#66c04e" />;
+    // the same petal rings the 3D face traces, drawn as grooves
+    const ring = (k: number) => `M${flowerRingPath(k, R, 10).map(([x, z]) => `${(c + x).toFixed(2)} ${(c + z).toFixed(2)}`).join("L")}Z`;
+    detail = (
+      <g fill="none" stroke="rgba(8,8,10,0.55)" strokeWidth="0.9" strokeLinejoin="round">
+        {Array.from({ length: FLOWER.rings }, (_, k) => (
+          <path key={k} d={ring(k)} />
+        ))}
+      </g>
+    );
   }
   return (
     <svg viewBox={`0 0 ${S} ${S}`} className="size-11" aria-hidden>

@@ -51,7 +51,7 @@ export class PadGeometrySet {
   minY: number;
   /** Current (blended) shader params — read by the material every frame. */
   readonly faceR: [number, number];
-  readonly pat: [number, number, number, number];
+  readonly pat: PadState["pat"];
 
   constructor(initial: PadState) {
     this.from = initial;
@@ -121,7 +121,12 @@ export class PadGeometrySet {
     const fromDepth = this.from.pat[3];
     const toDepth = this.to.pat[3];
     const src = toDepth > 0 ? this.to.pat : this.from.pat;
-    if (fromDepth > 0 && toDepth > 0 && this.from.pat[0] !== this.to.pat[0]) {
+    const sameFlower = this.from.pat[4] === 1 && this.to.pat[4] === 1;
+    if (fromDepth > 0 && toDepth > 0 && sameFlower) {
+      // flower rings scale with the face: grow or shrink them in place
+      for (let i = 0; i < 4; i++) this.pat[i] = l(this.from.pat[i], this.to.pat[i]);
+      this.pat[4] = 1;
+    } else if (fromDepth > 0 && toDepth > 0 && (this.from.pat[0] !== this.to.pat[0] || this.from.pat[4] !== this.to.pat[4])) {
       // switching pattern type: sink the old one out, raise the new one in
       const useFrom = t < 0.5;
       const p = useFrom ? this.from.pat : this.to.pat;
@@ -130,11 +135,13 @@ export class PadGeometrySet {
       this.pat[1] = p[1];
       this.pat[2] = p[2];
       this.pat[3] = p[3] * k;
+      this.pat[4] = p[4];
     } else {
       this.pat[0] = src[0];
       this.pat[1] = src[1];
       this.pat[2] = src[2];
       this.pat[3] = l(fromDepth, toDepth);
+      this.pat[4] = src[4];
     }
   }
 

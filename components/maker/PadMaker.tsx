@@ -182,7 +182,7 @@ export function PadMaker() {
             </Group>
 
             <Group title="Face" hint={face.name}>
-              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                 {FACES.map((f) => (
                   <label key={f.id} className="pk-option flex cursor-pointer flex-col items-center gap-2 rounded-2xl px-2 pb-3 pt-4">
                     <input type="radio" name={`${name}-face`} className="sr-only" checked={build.face === f.id} onChange={() => set("face", f.id)} />

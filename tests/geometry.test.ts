@@ -7,6 +7,7 @@ import {
   annulusIndices,
   dimsOf,
   edgeProfile,
+  flowerPetals,
   grooveDepth,
   padState,
   resample,
@@ -46,9 +47,9 @@ const fromNormals = (part: Part) => (vi: number): [number, number, number] => [
 ];
 
 describe("pad options", () => {
-  it("covers all 360 owner-confirmed combinations", () => {
-    expect(COMBINATIONS).toBe(360);
-    expect([...allBuilds()]).toHaveLength(360);
+  it("covers all 450 owner-confirmed combinations", () => {
+    expect(COMBINATIONS).toBe(450);
+    expect([...allBuilds()]).toHaveLength(450);
   });
 
   it("round-trips builds and rejects junk", () => {
@@ -86,7 +87,7 @@ describe("pad geometry", () => {
         }
   });
 
-  it("builds finite, fixed-length arrays for all 360 builds (so any two can morph)", () => {
+  it("builds finite, fixed-length arrays for every build (so any two can morph)", () => {
     const ref = padState({ size: 75, thickness: 20, edge: "splay", face: "crosscut" });
     for (const b of allBuilds()) {
       const s = padState(b);
@@ -137,7 +138,26 @@ describe("pad geometry", () => {
     for (let i = 1; i < prof.length; i++) expect(prof[i][1]).toBeGreaterThanOrEqual(prof[i - 1][1] - 1e-9);
   });
 
-  it("traces grooves in the shader, raises the flower in geometry, keeps flat flat", () => {
+  it("DRC Hole: a dish recessed round the hole, flat floor, sloping up to a flat face", () => {
+    const s = padState({ size: 75, thickness: 20, edge: "rounded", face: "drc" });
+    const [rf, rh] = s.faceR;
+    const { Hf } = dimsOf({ size: 75, thickness: 20 });
+    const ys = Array.from({ length: FACE_RINGS + 1 }, (_, i) => s.face.pos[i * SEG * 3 + 1]);
+    expect(ys[0]).toBeGreaterThan(2); // recessed a few mm at the hole
+    expect(ys[0]).toBeLessThan(0.3 * Hf);
+    expect(ys[0]).toBeCloseTo(ys[5]); // flat floor
+    expect(ys[FACE_RINGS]).toBeCloseTo(0); // the face itself is flat
+    for (let i = 1; i <= FACE_RINGS; i++) expect(ys[i]).toBeLessThanOrEqual(ys[i - 1] + 1e-6); // only climbs out
+    // the dish spans roughly the middle third of the face
+    const rAt = (i: number) => rh + ((rf - rh) * i) / FACE_RINGS;
+    const edge = ys.findIndex((y) => y < 0.01);
+    expect(rAt(edge) / rf).toBeGreaterThan(0.38);
+    expect(rAt(edge) / rf).toBeLessThan(0.5);
+    // the hole wall starts at the dish floor
+    expect(Math.min(...Array.from({ length: s.hole.pos.length / 3 }, (_, i) => s.hole.pos[i * 3 + 1]))).toBeCloseTo(ys[0]);
+  });
+
+  it("traces every face pattern in the shader and keeps the geometry flat", () => {
     const xc = padState({ size: 75, thickness: 20, edge: "rounded", face: "crosscut" });
     const flower = padState({ size: 75, thickness: 20, edge: "rounded", face: "flower" });
     const flat = padState({ size: 75, thickness: 20, edge: "rounded", face: "flat" });
@@ -152,8 +172,20 @@ describe("pad geometry", () => {
     expect(grooveDepth(xc.pat, s * 2, s * 0.5, rf, rh)).toBeCloseTo(xc.pat[3], 1); // on a slit
     expect(grooveDepth(xc.pat, s * 1.5, s * 0.5, rf, rh)).toBeCloseTo(0); // middle of a block
     expect(grooveDepth(xc.pat, rf, 0, rf, rh)).toBeCloseTo(0); // fades out at the rim
-    expect(flower.pat[3]).toBe(0);
-    expect(flower.minY).toBeLessThan(-1);
+    // flower power (off the real pad): ~10 petals round the hole, rings of petal grooves outward
+    expect(flower.pat[4]).toBe(1);
+    expect(flower.pat[3]).toBeGreaterThan(1);
+    expect(maxY(flower.face.pos)).toBeCloseTo(0);
+    expect(flowerPetals(0)).toBe(10);
+    for (let k = 1; k < 4; k++) expect(flowerPetals(k)).toBeGreaterThan(flowerPetals(k - 1));
+    const S = flower.faceR[0]; // the rings scale with the face
+    // the central flower's first petal is a circle centred on the x axis at 0.36 S
+    const R = 0.36 * S;
+    const rho = R * Math.sin(Math.PI / flowerPetals(0));
+    const at = (x: number, z = 0) => grooveDepth(flower.pat, x, z, flower.faceR[0], flower.faceR[1]);
+    expect(at(R + rho)).toBeGreaterThan(0.9 * flower.pat[3]); // in the groove at the petal tip
+    expect(at(R)).toBeCloseTo(0); // middle of the petal
+    expect(at(R - rho * 0.5)).toBeCloseTo(0); // inner half of the petal: no groove there
     // flat: no grooves, nothing standing proud
     expect(flat.pat[3]).toBe(0);
     expect(maxY(flat.face.pos)).toBeCloseTo(0);
