@@ -27,6 +27,7 @@ npm run build && npx next start -p 3100 &
 node tests/e2e/shots.mjs shots http://localhost:3100
 node tests/e2e/match.mjs shots-match http://localhost:3100   # Pad Match states
 node tests/e2e/home.mjs shots-home http://localhost:3100     # home timeline, every chapter
+node tests/e2e/timing.mjs http://localhost:3100              # every scroll animation finished by the time it is centred
 node tests/e2e/range.mjs shots-range http://localhost:3100   # Range showroom + buy links
 node tests/e2e/pwa.mjs shots-pwa http://localhost:3100 "--stop-cmd=fuser -k 3100/tcp"   # install + offline (stops the server to fake an outage)
 ```
@@ -96,7 +97,7 @@ Customer details (name, email, phone) never go into events.
 | Pad shapes (edge profiles, face bosses, groove patterns) | `lib/pad/geometry.ts` |
 | Foam look (cells, grooves shader) | `lib/pad/foamMaterial.ts` |
 | Bottom tabs (order, names, icons) | `components/TabBar.tsx` |
-| Colours, type, motion tokens | `app/globals.css` |
+| Colours, type, motion tokens, studio backdrop | `app/globals.css`, `components/StudioBackdrop.tsx` |
 | Home timeline copy (chapters, causes, Gen II points, Elite claims) | `lib/history.ts` |
 | Home timeline layout and animation | `components/history/` |
 | Matt's photos and the Elite logo (cut out, WebP) | `public/history/` |

@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
-import { useScrollFx } from "./useScrollFx";
+import { inView, useScrollFx } from "./useScrollFx";
 
 const C = 200;
 const R = 150;
@@ -21,7 +21,7 @@ export function FoamNetwork() {
   useScrollFx(ref, (reduced) => {
     const tl = gsap.timeline({
       defaults: { ease: "none" },
-      scrollTrigger: reduced ? undefined : { trigger: ref.current, start: "top 80%", end: "bottom 45%", scrub: 0.6 },
+      scrollTrigger: reduced ? undefined : inView(ref.current),
     });
     tl.fromTo("[data-link]", { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.3, stagger: 0.06 }, 0)
       .fromTo("[data-node]", { scale: 0.4, autoAlpha: 0, transformOrigin: "50% 50%" }, { scale: 1, autoAlpha: 1, duration: 0.2, stagger: 0.06, ease: "back.out(2)" }, 0.12)

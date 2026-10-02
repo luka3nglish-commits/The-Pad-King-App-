@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
-import { useScrollFx } from "./useScrollFx";
+import { inView, useScrollFx } from "./useScrollFx";
 
 const C = 210;
 // 150 / 140 / 90 mm pads, drawn to scale
@@ -19,7 +19,7 @@ export function CncRings() {
   useScrollFx(ref, (reduced) => {
     const tl = gsap.timeline({
       defaults: { ease: "none" },
-      scrollTrigger: reduced ? undefined : { trigger: ref.current, start: "top 80%", end: "bottom 40%", scrub: 0.6 },
+      scrollTrigger: reduced ? undefined : inView(ref.current),
     });
     RINGS.forEach((_, i) => {
       const at = i * 0.22;

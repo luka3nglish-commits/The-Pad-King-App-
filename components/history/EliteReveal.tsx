@@ -6,7 +6,7 @@ import { ELITE_CLAIMS, PHOTOS, chapter } from "@/lib/history";
 import { Ghost, chapterNumber } from "./ChapterSection";
 import { HeatGauge } from "./HeatGauge";
 import { HistImg } from "./HistImg";
-import { useScrollFx } from "./useScrollFx";
+import { SCRUB, useScrollFx } from "./useScrollFx";
 
 const CH = chapter("gen3");
 
@@ -20,12 +20,12 @@ export function EliteReveal() {
     gsap.fromTo(
       "[data-logo]",
       { scale: 0.84, autoAlpha: 0, filter: "blur(16px)" },
-      { scale: 1, autoAlpha: 1, filter: "blur(0px)", ease: "none", scrollTrigger: { trigger: "[data-logo]", start: "top 92%", end: "top 40%", scrub: 0.6 } },
+      { scale: 1, autoAlpha: 1, filter: "blur(0px)", ease: "none", scrollTrigger: { trigger: "[data-logo]", start: "top 95%", end: "center 62%", scrub: SCRUB } },
     );
     gsap.fromTo("[data-spot]", { autoAlpha: 0 }, { autoAlpha: 1, ease: "none", scrollTrigger: { trigger: ref.current, start: "top 80%", end: "top 20%", scrub: true } });
     gsap.set(gauge, { "--v": 0 });
     gsap.set(marks, { autoAlpha: 0.15 });
-    const tl = gsap.timeline({ scrollTrigger: { trigger: gauge, start: "top 88%", end: "top 50%", scrub: 0.6 } });
+    const tl = gsap.timeline({ scrollTrigger: { trigger: gauge, start: "top 92%", end: "top 62%", scrub: SCRUB } });
     tl.to(gauge, { "--v": 1, ease: "power1.inOut", duration: 1 }, 0)
       .to(marks[0], { autoAlpha: 1, duration: 0.05 }, 0.55)
       .to(marks[1], { autoAlpha: 1, duration: 0.05 }, 0.72)

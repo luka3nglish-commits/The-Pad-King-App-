@@ -7,8 +7,8 @@ import { Analytics } from "@/components/Analytics";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { SiteHeader } from "@/components/SiteHeader";
+import { StudioBackdrop } from "@/components/StudioBackdrop";
 import { TabBar } from "@/components/TabBar";
-import { TigerBackdrop } from "@/components/TigerBackdrop";
 
 // Public address of the app, for absolute share-preview links. On Vercel, Next
 // fills this in itself when it's unset.
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-AU">
       <body className="pb-[var(--pk-tab-h)]">
-        <TigerBackdrop />
+        <StudioBackdrop />
         <SiteHeader />
         <main className="relative z-10">{children}</main>
         <TabBar />

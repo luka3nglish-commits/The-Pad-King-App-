@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { chapter } from "@/lib/history";
 import { ChapterBody, ChapterTitle } from "./ChapterSection";
 import { HeatGauge } from "./HeatGauge";
-import { useScrollFx } from "./useScrollFx";
+import { SCRUB, useScrollFx } from "./useScrollFx";
 
 const GenScene = dynamic(() => import("./GenScene"), {
   ssr: false,
@@ -21,8 +21,8 @@ const BEATS = [chapter("gen1"), chapter("glue"), chapter("gen2")];
 // where each beat sits in the pinned scroll (0 → 1)
 const WINDOWS: [number, number][] = [
   [0, 0.3],
-  [0.36, 0.64],
-  [0.7, 1],
+  [0.34, 0.64],
+  [0.68, 1],
 ];
 
 /**
@@ -44,7 +44,7 @@ export function GenSequence() {
         trigger: sectionRef.current,
         start: "top top",
         end: "bottom bottom",
-        scrub: reduced ? true : 0.6,
+        scrub: reduced ? true : SCRUB,
         onUpdate: (self) => {
           progressRef.current = self.progress;
         },
@@ -64,19 +64,19 @@ export function GenSequence() {
     // the gauge: typical hot melt first, then Pad King's 120 °C
     gsap.set(gauge, { "--v": 0 });
     gsap.set(marks, { autoAlpha: 0.15 });
-    tl.to(gauge, { "--v": 70 / 200, duration: 0.07, ease: "power1.inOut" }, 0.41)
-      .to(marks[0], { autoAlpha: 1, duration: 0.02 }, 0.46)
-      .to(gauge, { "--v": 120 / 200, duration: 0.08, ease: "power1.inOut" }, 0.5)
-      .to(marks[1], { autoAlpha: 1, duration: 0.02 }, 0.57)
+    tl.to(gauge, { "--v": 70 / 200, duration: 0.05, ease: "power1.inOut" }, 0.37)
+      .to(marks[0], { autoAlpha: 1, duration: 0.02 }, 0.41)
+      .to(gauge, { "--v": 120 / 200, duration: 0.06, ease: "power1.inOut" }, 0.43)
+      .to(marks[1], { autoAlpha: 1, duration: 0.02 }, 0.48)
       .to({}, { duration: 0.0001 }, 1); // pin the timeline length to exactly 1.0
   });
 
   return (
-    <section ref={sectionRef} id="gen-seq" className="relative" style={{ height: "420svh" }} aria-label="From Gen I to Gen II">
+    <section ref={sectionRef} id="gen-seq" className="relative" style={{ height: "380svh" }} aria-label="From Gen I to Gen II">
       {/* chapter anchors for the rail and the hero ribbon */}
-      <div id="ch-gen1" data-chapter="gen1" className="pointer-events-none absolute inset-x-0 top-0 h-[36%]" aria-hidden />
-      <div id="ch-glue" data-chapter="glue" className="pointer-events-none absolute inset-x-0 top-[36%] h-[34%]" aria-hidden />
-      <div id="ch-gen2" data-chapter="gen2" className="pointer-events-none absolute inset-x-0 top-[70%] h-[30%]" aria-hidden />
+      <div id="ch-gen1" data-chapter="gen1" className="pointer-events-none absolute inset-x-0 top-0 h-[34%]" aria-hidden />
+      <div id="ch-glue" data-chapter="glue" className="pointer-events-none absolute inset-x-0 top-[34%] h-[34%]" aria-hidden />
+      <div id="ch-gen2" data-chapter="gen2" className="pointer-events-none absolute inset-x-0 top-[68%] h-[32%]" aria-hidden />
 
       <div className="sticky top-0 h-[calc(100svh-var(--pk-tab-h))] overflow-hidden">
         {BEATS.map((c) => (

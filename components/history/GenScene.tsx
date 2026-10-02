@@ -27,13 +27,15 @@ interface Pose {
 }
 
 // Scroll choreography over the pinned section (0 → 1): Gen I, the glue, Gen II.
+// Each beat reaches its full pose as its words arrive (0, 0.34, 0.68), then holds.
 const POSES: Pose[] = [
   { at: 0.0, rx: FACE_ON + 0.42, rz: 0.22, x: 0.95, my: 0.44, s: 1.0, ms: 1, band: 0, glow: 0 },
-  { at: 0.28, rx: FACE_ON + 0.62, rz: 0.3, x: 0.95, my: 0.44, s: 1.02, ms: 1, band: 0, glow: 0 },
-  { at: 0.4, rx: 0.62, rz: -0.32, x: 0.92, my: 0.46, s: 1.08, ms: 1, band: 0, glow: 0.2 },
-  { at: 0.58, rx: 0.5, rz: -0.22, x: 0.92, my: 0.46, s: 1.08, ms: 1, band: 0, glow: 1 },
-  { at: 0.7, rx: FACE_UP + 0.28, rz: 0.04, x: 0.88, my: 0.46, s: 1.3, ms: 1.08, band: 0, glow: 0 },
-  { at: 0.84, rx: FACE_UP + 0.2, rz: -0.04, x: 0.88, my: 0.46, s: 1.32, ms: 1.08, band: 1, glow: 0 },
+  { at: 0.26, rx: FACE_ON + 0.56, rz: 0.28, x: 0.95, my: 0.44, s: 1.02, ms: 1, band: 0, glow: 0 },
+  { at: 0.36, rx: 0.6, rz: -0.3, x: 0.92, my: 0.46, s: 1.08, ms: 1, band: 0, glow: 0.35 },
+  { at: 0.46, rx: 0.54, rz: -0.24, x: 0.92, my: 0.46, s: 1.08, ms: 1, band: 0, glow: 1 },
+  { at: 0.62, rx: 0.5, rz: -0.2, x: 0.92, my: 0.46, s: 1.08, ms: 1, band: 0, glow: 1 },
+  { at: 0.7, rx: FACE_UP + 0.26, rz: 0.02, x: 0.88, my: 0.46, s: 1.3, ms: 1.08, band: 0.3, glow: 0 },
+  { at: 0.77, rx: FACE_UP + 0.22, rz: -0.03, x: 0.88, my: 0.46, s: 1.32, ms: 1.08, band: 1, glow: 0 },
   { at: 1.0, rx: FACE_UP + 0.3, rz: 0.06, x: 0.88, my: 0.46, s: 1.28, ms: 1.08, band: 1, glow: 0 },
 ];
 
@@ -64,7 +66,8 @@ function Rig({ progressRef }: { progressRef: MutableRefObject<number> }) {
     const target = poseAt(progressRef.current);
     if (!cur.current) cur.current = { ...target };
     const c = cur.current;
-    for (const k of KEYS) c[k] = THREE.MathUtils.damp(c[k], target[k], 5, dt);
+    // quick catch-up: smooth, but never a beat behind the scroll
+    for (const k of KEYS) c[k] = THREE.MathUtils.damp(c[k], target[k], 11, dt);
     const phone = size.width < 768;
     const t = state.clock.elapsedTime;
     g.rotation.set(c.rx + Math.sin(t * 0.6) * 0.025, 0, c.rz + Math.sin(t * 0.45) * 0.025);

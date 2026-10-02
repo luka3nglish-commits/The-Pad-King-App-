@@ -31,9 +31,9 @@ export function HistoryStory() {
     if (reduced) return;
     gsap.set("[data-reveal]", { autoAlpha: 0, y: 36 });
     ScrollTrigger.batch("[data-reveal]", {
-      start: "top 90%",
+      start: "top 92%",
       once: true,
-      onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, overwrite: true }),
+      onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.06, overwrite: true }),
     });
     gsap.utils.toArray<HTMLElement>("[data-ghost]").forEach((el) => {
       gsap.fromTo(el, { yPercent: 22 }, { yPercent: -22, ease: "none", scrollTrigger: { trigger: el.parentElement, start: "top bottom", end: "bottom top", scrub: true } });

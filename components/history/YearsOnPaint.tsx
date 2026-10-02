@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
-import { useScrollFx } from "./useScrollFx";
+import { inView, useScrollFx } from "./useScrollFx";
 
 /** 1993 chapter: the years count up as you scroll, along a 1993 → today line. */
 export function YearsOnPaint() {
@@ -11,7 +11,7 @@ export function YearsOnPaint() {
     if (reduced) return;
     const num = ref.current!.querySelector<HTMLElement>("[data-years]")!;
     const o = { v: 0 };
-    const st = { trigger: ref.current, start: "top 80%", end: "bottom 45%", scrub: 0.5 };
+    const st = inView(ref.current);
     gsap.to(o, { v: 30, ease: "power1.out", scrollTrigger: st, onUpdate: () => (num.textContent = String(Math.round(o.v))) });
     gsap.fromTo("[data-line]", { scaleX: 0 }, { scaleX: 1, ease: "none", scrollTrigger: st });
   });
