@@ -7,9 +7,10 @@ import * as THREE from "three";
  *  1. Foam cells — object-space value noise perturbs the normal and albedo so
  *     the foam reads as open-cell foam, not plastic. Faded out with distance
  *     (fwidth) so it never shimmers.
- *  2. Face grooves (face material only) — Crosscut/Waffle channels are traced
- *     per pixel with parallax occlusion mapping against an analytic height field,
- *     so the grid edges are perfectly crisp at any zoom and morph smoothly.
+ *  2. Face grooves (face material only) — Crosscut/Waffle channels and the
+ *     Flower Power rings are traced per pixel with parallax occlusion mapping
+ *     against an analytic height field, so the edges are perfectly crisp at
+ *     any zoom and morph smoothly.
  *  3. Band — an optional coloured stripe around the side between two heights,
  *     like the interface layer through the middle of a Gen II pad, or the
  *     Frostbite's backing foam. Its own grain strength, since those layers are
@@ -25,7 +26,8 @@ import * as THREE from "three";
 export type SurfaceKind = "face" | "foam" | "fabric";
 
 export interface SurfaceUniforms {
-  uPat: { value: THREE.Vector4 }; // spacing, halfWidth, soft, depth (mm)
+  uPat: { value: THREE.Vector4 }; // scale, halfWidth, soft, depth (mm) — see faceGrooves
+  uPatKind: { value: number }; // 0 square grid, 1 flower rings
   uFaceR: { value: THREE.Vector2 }; // face radius, hole radius (mm)
   uCell: { value: number }; // noise cell size (mm)
   uBump: { value: number }; // micro-normal strength
@@ -58,6 +60,7 @@ varying vec3 vPkT;
 varying vec3 vPkB;
 varying vec3 vPkN;
 uniform vec4 uPat;
+uniform float uPatKind;
 uniform vec2 uFaceR;
 uniform float uCell;
 uniform float uBump;
@@ -97,10 +100,43 @@ float pkChannel(float v) {
   float soft = max(uPat.z, pkAA);
   return 1.0 - smoothstep(uPat.y - soft, uPat.y + soft, d);
 }
+// Flower Power rings — mirrors flowerDist() in lib/pad/geometry.ts (FLOWER constants)
+float pkFlower(vec2 p) {
+  float S = uPat.x;
+  float th = atan(p.y, p.x);
+  float d = 1e5;
+  for (int k = 0; k < 4; k++) {
+    float fk = float(k);
+    float base = 0.36 + 0.18 * fk;
+    float n = floor(3.14159265 / asin(0.11 / base) + 0.5);
+    float R = base * S;
+    float step = 6.2831853 / n;
+    float rho = R * sin(3.14159265 / n);
+    float rc = R * cos(3.14159265 / n);
+    float phase = 0.5 * fk;
+    float j0 = floor(th / step - phase);
+    for (int i = 0; i < 2; i++) {
+      float a = (j0 + float(i) + phase) * step;
+      vec2 c = R * vec2(cos(a), sin(a));
+      float l = max(length(p - c), 1e-4);
+      vec2 q = c + (p - c) * (rho / l);
+      if (length(q) >= rc) {
+        d = min(d, abs(l - rho));
+      } else {
+        float b0 = a - step * 0.5;
+        float b1 = a + step * 0.5;
+        d = min(d, min(length(p - rc * vec2(cos(b0), sin(b0))), length(p - rc * vec2(cos(b1), sin(b1)))));
+      }
+    }
+  }
+  float soft = max(uPat.z, pkAA);
+  return 1.0 - smoothstep(uPat.y - soft, uPat.y + soft, d);
+}
 float pkDepth(vec2 p) {
   float r = length(p);
   float fade = (1.0 - smoothstep(uFaceR.x - 1.8, uFaceR.x - 0.5, r)) * smoothstep(uFaceR.y + 0.5, uFaceR.y + 1.8, r);
-  return uPat.w * max(pkChannel(p.x), pkChannel(p.y)) * fade;
+  float g = uPatKind > 0.5 ? pkFlower(p) : max(pkChannel(p.x), pkChannel(p.y));
+  return uPat.w * g * fade;
 }
 #endif
 `;
@@ -215,6 +251,7 @@ export function createSurfaceMaterial(kind: SurfaceKind, params: THREE.MeshPhysi
   const material = new THREE.MeshPhysicalMaterial(params);
   const uniforms: SurfaceUniforms = {
     uPat: { value: new THREE.Vector4(10, 0.5, 0.1, 0) },
+    uPatKind: { value: 0 },
     uFaceR: { value: new THREE.Vector2(30, 4) },
     uCell: { value: kind === "fabric" ? 0.3 : 0.5 },
     uBump: { value: kind === "fabric" ? 0.7 : 0.3 },
@@ -241,5 +278,10 @@ export function createSurfaceMaterial(kind: SurfaceKind, params: THREE.MeshPhysi
       .replace("#include <lights_physical_fragment>", FRAG_SHEEN);
   };
   material.customProgramCacheKey = () => `pk-surface-${kind}`;
-  return { material, uniforms };
+  /** Face pattern from faceGrooves: [scale, halfWidth, soft, depth, kind]. */
+  const setPattern = (pat: readonly number[]) => {
+    uniforms.uPat.value.set(pat[0], pat[1], pat[2], pat[3]);
+    uniforms.uPatKind.value = pat[4];
+  };
+  return { material, uniforms, setPattern };
 }

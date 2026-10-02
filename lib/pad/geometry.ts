@@ -3,7 +3,7 @@
  *
  * Coordinate system (millimetres):
  *   - pad axis = +y, face at y = 0, velcro (backing-plate side) at the top
- *   - grooves cut UP into the foam (+y), raised shapes stand proud of the face (-y)
+ *   - grooves cut UP into the foam (+y)
  *
  * Every pad shape is reduced to fixed-length Float32Arrays (same vertex count for
  * every build), so switching options is a straight per-vertex lerp: a true morph,
@@ -166,49 +166,115 @@ export function edgeProfile(edge: EdgeShape, Rv: number, Hf: number, n = PROFILE
 }
 
 /* ------------------------------------------------------------------ */
-/* Face patterns — height field h(x, z) in mm                          */
+/* Face patterns — groove depth field in mm, traced in the shader       */
 /* ------------------------------------------------------------------ */
 
-export interface FaceCtx {
-  D: number;
-  Hf: number;
-  rf: number; // face radius (where the face meets the side profile)
-  rh: number; // hole radius
-}
-
-function bossHeight(Hf: number) {
-  return clamp(0.11 * Hf, 1.2, 2.2);
-}
+/**
+ * Every face is flat in geometry: its pattern (Crosscut, Waffle, Flower Power)
+ * is traced per pixel in the foam shader from these parameters, so the groove
+ * edges stay razor-sharp at any zoom.
+ *
+ * Returns [scale, halfWidth, soft, depth, kind] in mm. kind 0 = square grid
+ * (scale = pitch), kind 1 = flower rings (scale = face radius, so the rings
+ * always run out to the rim whatever the edge). depth = 0 → no pattern.
+ */
+export type GroovePattern = [number, number, number, number, number];
 
 /**
- * Face geometry carries only the big, smooth features (bosses). Fine grooves
- * (Crosscut, Waffle) are rendered per-pixel in the foam shader from these
- * parameters, so their edges stay razor-sharp at any zoom.
- *
- * Returns [spacing, halfWidth, soft, depth] in mm. depth = 0 → no grooves.
+ * Flower Power, off Luka's photo of the real pad: a flower of 10 petals round
+ * the hole, then rings of petals out to the rim. Each ring is a row of circles
+ * centred on its base radius, touching their neighbours, and the groove runs
+ * round their outer arcs, so the cusps point in. Radii are fractions of the
+ * face radius; every petal is about the same size.
  */
-export type GroovePattern = [number, number, number, number];
+export const FLOWER = { core: 0.36, pitch: 0.18, petal: 0.11, rings: 4 } as const;
 
-export function faceGrooves(face: FaceShape, D: number, Hf: number): GroovePattern {
+export function faceGrooves(face: FaceShape, D: number, Hf: number, rf: number): GroovePattern {
   switch (face) {
     case "crosscut": // raised crosscut (Matt): small squares, ~3.6 mm, standing ~1 mm proud of the face
-      return [3.6, 0.38, 0.1, 1.1];
+      return [3.6, 0.38, 0.1, 1.1, 0];
     case "waffle": {
       // wider, shallow channels
       const s = D / 6.5;
-      return [s, s * 0.15, s * 0.06, Math.min(2.4, 0.18 * Hf)];
+      return [s, s * 0.15, s * 0.06, Math.min(2.4, 0.18 * Hf), 0];
     }
+    case "flower":
+      // grooves ~1.5 mm wide on a 75 mm pad, with broad soft shoulders so the petals read as pillows
+      return [rf, 0.025 * rf, 0.03 * rf, Math.min(2.4, 0.15 * Hf), 1];
     default:
-      return [D / 8.5, 0.55, 0.12, 0];
+      return [D / 8.5, 0.55, 0.12, 0, 0];
   }
+}
+
+/** Petals in flower ring k: as many as fit at about the same petal size. */
+export function flowerPetals(k: number) {
+  const R = FLOWER.core + FLOWER.pitch * k;
+  return Math.round(Math.PI / Math.asin(FLOWER.petal / R));
+}
+
+/** Ring k's geometry for a face of radius S: base radius, petals, petal radius, phase. */
+function flowerRingDims(k: number, S: number) {
+  const R = (FLOWER.core + FLOWER.pitch * k) * S;
+  const n = flowerPetals(k);
+  const rho = R * Math.sin(Math.PI / n); // neighbouring circles just touch
+  const phase = 0.5 * k; // neighbouring rings stagger by half a petal
+  return { R, n, rho, phase };
+}
+
+/** Distance (mm) from (x, z) to the nearest flower groove — mirrored in foamMaterial.ts. */
+export function flowerDist(x: number, z: number, S: number) {
+  const th = Math.atan2(z, x);
+  let d = Infinity;
+  for (let k = 0; k < FLOWER.rings; k++) {
+    const { R, n, rho, phase } = flowerRingDims(k, S);
+    const step = (2 * Math.PI) / n;
+    const rc = R * Math.cos(Math.PI / n); // where neighbouring petals meet
+    const j0 = Math.floor(th / step - phase);
+    for (const j of [j0, j0 + 1]) {
+      const a = (j + phase) * step;
+      const cx = R * Math.cos(a);
+      const cz = R * Math.sin(a);
+      const l = Math.hypot(x - cx, z - cz) || 1e-6;
+      // nearest point on the circle; the groove is only its outer arc
+      const qx = cx + ((x - cx) * rho) / l;
+      const qz = cz + ((z - cz) * rho) / l;
+      if (Math.hypot(qx, qz) >= rc) d = Math.min(d, Math.abs(l - rho));
+      else
+        for (const s of [-1, 1]) {
+          const b = a + (s * step) / 2;
+          d = Math.min(d, Math.hypot(x - rc * Math.cos(b), z - rc * Math.sin(b)));
+        }
+    }
+  }
+  return d;
+}
+
+/** Flower ring k's groove as a closed outline (for icons), face radius S. */
+export function flowerRingPath(k: number, S: number, steps = 24): Vec2[] {
+  const { R, n, rho, phase } = flowerRingDims(k, S);
+  const step = (2 * Math.PI) / n;
+  const out: Vec2[] = [];
+  for (let j = 0; j < n; j++) {
+    const a = (j + phase) * step;
+    const cx = R * Math.cos(a);
+    const cz = R * Math.sin(a);
+    // outer arc, from where it meets the previous petal round to the next
+    const half = Math.PI / 2 + Math.PI / n;
+    for (let i = 0; i <= steps; i++) {
+      const t = a - half + (2 * half * i) / steps;
+      out.push([cx + rho * Math.cos(t), cz + rho * Math.sin(t)]);
+    }
+  }
+  return out;
 }
 
 /** Shader-side groove depth at (x, z) — mirrored in foamMaterial.ts for tests and icons. */
 export function grooveDepth(p: GroovePattern, x: number, z: number, rf: number, rh: number) {
-  const [s, hw, soft, depth] = p;
+  const [s, hw, soft, depth, kind] = p;
   if (depth <= 0) return 0;
   const r = Math.hypot(x, z);
   const fade = (1 - smoothstep(rf - 1.8, rf - 0.5, r)) * smoothstep(rh + 0.5, rh + 1.8, r);
+  if (kind === 1) return depth * (1 - smoothstep(hw - soft, hw + soft, flowerDist(x, z, s))) * fade;
   const ch = (v: number) => {
     const d = Math.abs((((v + s / 2) % s) + s) % s - s / 2);
     return 1 - smoothstep(hw - soft, hw + soft, d);
@@ -216,24 +282,6 @@ export function grooveDepth(p: GroovePattern, x: number, z: number, rf: number, 
   return depth * Math.max(ch(x), ch(z)) * fade;
 }
 
-export function faceHeight(face: FaceShape, x: number, z: number, c: FaceCtx): number {
-  switch (face) {
-    case "flower": {
-      // PROVISIONAL — still in testing; six rounded petals.
-      const r = Math.hypot(x, z);
-      const th = Math.atan2(z, x);
-      const rb = c.rf * 0.68 * (0.72 + 0.28 * Math.pow(Math.abs(Math.cos(3 * th)), 0.7));
-      return -bossHeight(c.Hf) * (1 - smoothstep(rb - 0.45, rb + 0.45, r));
-    }
-    default:
-      return 0; // flat, or grooves handled in the shader
-  }
-}
-
-/** Height where the face meets the centre hole (constant around the hole). */
-export function faceHeightAtHole(face: FaceShape, c: FaceCtx) {
-  return face === "flower" ? -bossHeight(c.Hf) : 0;
-}
 
 /* ------------------------------------------------------------------ */
 /* Full pad state — fixed-length arrays, ready to lerp                 */
@@ -331,29 +379,22 @@ export function padState(b: PadShape): PadState {
   const { D, Rv, Hf, T, rh } = dims;
   const profile = edgeProfile(b.edge, Rv, Hf);
   const rf = profile[0][0];
-  const ctx: FaceCtx = { D, Hf, rf, rh };
-
   const side = revolve(profile, profileNormals(profile));
 
-  // Face: polar grid, ring 0 at the hole, last ring at the face edge.
+  // Face: polar grid, ring 0 at the hole, last ring at the face edge. Flat:
+  // every face pattern is traced in the shader (see faceGrooves).
   const face = new Float32Array((FACE_RINGS + 1) * SEG * 3);
-  let minY = 0;
+  const minY = 0;
   for (let i = 0; i <= FACE_RINGS; i++) {
     const r = lerp(rh, rf, i / FACE_RINGS);
     for (let j = 0; j < SEG; j++) {
-      const x = r * cosT[j];
-      const z = r * sinT[j];
-      const y = faceHeight(b.face, x, z, ctx);
       const k = (i * SEG + j) * 3;
-      face[k] = x;
-      face[k + 1] = y;
-      face[k + 2] = z;
-      if (y < minY) minY = y;
+      face[k] = r * cosT[j];
+      face[k + 2] = r * sinT[j];
     }
   }
 
-  const hY = faceHeightAtHole(b.face, ctx);
-  const hole = revolve([[rh, hY], [rh, Hf]], [[-1, 0], [-1, 0]]);
+  const hole = revolve([[rh, 0], [rh, Hf]], [[-1, 0], [-1, 0]]);
   const top = revolve([[Rv, Hf], [rh, Hf]], [[0, 1], [0, 1]]);
   const iface = annulus(rh, Rv, Hf, Hf + INTERFACE_T);
   const velcro = annulus(rh, Rv, Hf + INTERFACE_T, T);
@@ -368,7 +409,7 @@ export function padState(b: PadShape): PadState {
     minY,
     dims,
     faceR: [rf, rh],
-    pat: faceGrooves(b.face, D, Hf),
+    pat: faceGrooves(b.face, D, Hf, rf),
   };
 }
 
