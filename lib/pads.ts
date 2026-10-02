@@ -101,6 +101,9 @@ export const PADS: Pad[] = [
     blurb: "2.5× the defect removal of a conventional finishing pad, while keeping a high-gloss finish.",
     color: "#c78e1f",
     shape: { thickness: 20 },
+    // black backing foam, measured off Matt's shelf photo: about a third of the side
+    backing: { from: 0.78, color: "#26272b" },
+    velcro: { color: "#2a2b30" }, // the black runs right to the bottom edge in that photo
     sizes: ['3"', '5"', '6"'],
     specs: [
       { label: "Defect removal", value: "2.5× a conventional finishing pad" },

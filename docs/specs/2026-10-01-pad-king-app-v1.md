@@ -57,7 +57,7 @@ Later: live prices/stock from WooCommerce (needs read-only keys).
 Owner direction: "you press on a pad and it suggests a few polishes that are good with the pad", **brands limited to 3D, Sonax, Koch Chemie and P&S** (owner wrote "PNS" — P&S Detail Products: Rehab Correction Crème, Therapy Final Polish), and **images, not just words**.
 
 - All 5 stock pads (custom Spitfire builds use the Spitfire list). Tap a pad → 3D pad recolours/reshapes → its polishes as **product tiles**: bottle art (silhouette per brand, two bottles for combos) on a glow in the pad's colour, brand, product, stage tag, manufacturer spec where published (Sonax Perfect Finish Cut 4 · Gloss 6, Ultimate Cut Cut 6 · Gloss 3), Matt's note, **Matt's pick** badge, Find a stockist.
-- Product art is Pad King-styled illustration, not the brands' packaging. Each polish has an `image` slot: drop in real product photos (from Matt or the brands) and the tile shows the photo instead.
+- **Matt wants real bottles (2026-10-02)**: product photos, or at least the brands. Each polish has a `photos` slot (one cut-out per bottle, combos take two). Once a polish has photos the tile shows them, with a combo's second bottle tucked behind the first; until then it draws the Pad King-styled bottle art. The photos themselves are still to come (open item 18).
 - **Matt's picks** (badged) come from his published write-ups, filtered to the four brands:
   - Spitfire Green: 3D ACA 510 + 520 ("magic combo"), Koch Chemie H9 + F6 (75/25), 3D One, Sonax Perfect Finish, Koch Chemie M3 (finishing).
   - Afterburner: Sonax Ultimate Cut, 3D ACA 510, 3D One, Sonax Perfect Finish, 3D ACA 520. Tip: 10 mm sanding interface on a DA.
@@ -115,6 +115,11 @@ Then a real Frostbite (face, back, two sides):
 - The UI colour stays `#7CB6DD`; chips use the real colour.
 - **Method** (for the next pads): sample the photo medians (white balance checked against the shed floor, which matches the Spitfire shots), then iterate the albedo in linear space until the render's median matches under the studio light.
 - **Still to confirm**: calipers (face/velcro diameters, height, which size was photographed), and photos of Afterburner, Lone Star and Midas.
+
+Then the Midas (owner: "needs a black line around"), measured off Matt's shelf photo of the orange-gold pads:
+
+- Black backing foam across the back of the side, from 0.78 of the foam height, plus a dark velcro. Black is ~34 % of the visible side in the photo and 33 % in the render.
+- A band now keeps its own sheen (the gold foam's sheen was tinting the black brown). It also makes the Gen II stripe's sheen yellow, and the Frostbite's grey a touch more neutral.
 
 ## Design system (built)
 
@@ -207,3 +212,4 @@ Tabs are one array in `components/TabBar.tsx`.
 | 15 | Transparent / vector Elite Series logo (current one is cut out from a PNG) | Sharper Elite chapter |
 | 16 | Raised crosscut: exact square size and height (built as ~3.6 mm squares, ~1 mm proud) | Pad maker accuracy |
 | 17 | Calipers on the Spitfire and Frostbite (face Ø, velcro Ø, height, which size) + photos of Afterburner, Lone Star, Midas | 3D accuracy for the range |
+| 18 | Bottle photos for the 10 polishes (or network access to the brands' sites, and Matt's OK to use their product shots) | Real bottles in Pad Match |
